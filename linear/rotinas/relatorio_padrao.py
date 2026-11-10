@@ -15,10 +15,10 @@ from ..tela import ErroConfiguracao, Tela, TelaErro
 IMAGENS_NECESSARIAS = [
     "inicio_icones", "menu_relatorios", "menu_relatorios_gerenciais", "menu_curva_abc",
     "abc_titulo", "abc_btn_filtros", "abc_label_de", "abc_label_ate", "abc_label_filial",
-    "abc_btn_confirma", "abc_btn_sair",
+    "abc_label_analitico", "abc_label_sintetico", "abc_btn_confirma", "abc_btn_sair",
     "filtros_titulo", "filtros_btn_pesquisar", "filtros_btn_posicionar",
     "filial_label_pesquisa", "filial_btn_desmarcar_todos", "filial_btn_confirmar",
-    "vis_btn_exportar", "exp_titulo", "exp_label_nome", "exp_label_tipo",
+    "vis_btn_exportar", "vis_icone_impressora", "exp_titulo", "exp_label_nome", "exp_label_tipo",
     "desc_titulo", "desc_label_nome", "pasta_robo",
 ]
 
@@ -36,6 +36,7 @@ class Pedido:
     formato: str                # pdf | xlsx
     nome_servidor: str          # nome do arquivo no servidor, sem extensão
     pasta_servidor: str         # ex.: robo_linear
+    opcao_relatorio: str = "analitico"   # analitico | sintetico
     espera: float = 30
     espera_relatorio: float = 180
 
@@ -112,6 +113,17 @@ def executar(t: Tela, p: Pedido) -> str:
     t.clicar("filial_btn_confirmar")
     t.esperar_sumir("filial_label_pesquisa", 10)
 
+    # Opção Relatório: o ERP volta para "Sintético" ao aplicar a filial, então marcamos de novo aqui
+    t.passo(f"E-04b opção do relatório: {p.opcao_relatorio}")
+    rotulo = t.esperar(f"abc_label_{p.opcao_relatorio}", 5)
+    bx, by = rotulo.left - 9, rotulo.top + rotulo.height // 2      # a bolinha fica à esquerda do texto
+    for _ in range(3):
+        t.clicar_xy(bx, by)
+        if sum(t.cor(bx, by)) < 150:                                # miolo preto = marcada
+            break
+    else:
+        raise TelaErro(f"não consegui marcar a opção '{p.opcao_relatorio}'")
+
     # E-05 Confirma → espera a visualização
     t.passo("E-05 gerando o relatório")
     t.clicar_e_esperar("abc_btn_confirma", "vis_btn_exportar", tentativas=1,
@@ -119,7 +131,9 @@ def executar(t: Tela, p: Pedido) -> str:
 
     # E-06/E-07 Exportar → pasta do robô → apaga → tipo → nome → Salvar
     t.passo(f"E-07 exportando {p.nome_servidor}.{ext}")
-    t.clicar_e_esperar("vis_btn_exportar", "exp_titulo", assentar=1.5)
+    # ícone de exportar (ao lado da impressora): mais seguro que o botão "Exportar Relatório"
+    t.esperar("vis_btn_exportar", 10)
+    t.clicar_e_esperar("vis_icone_impressora", "exp_titulo", assentar=1.5, dx=-28)
     t.clicar("exp_label_nome", dx=100, a_partir="direita")
     t.tecla("ctrl", "a")
     t.digitar(_caminho_pasta(p.pasta_servidor))
@@ -139,7 +153,7 @@ def executar(t: Tela, p: Pedido) -> str:
     t.tecla("ctrl", "a")
     t.digitar(p.nome_servidor)
     t.tecla("enter")                           # Salvar
-    t.esperar_sumir("exp_titulo", 15)
+    t.esperar_sumir("exp_titulo", 60)
     time.sleep(3)                              # "Aguarde enquanto o documento é processado"
 
     # E-08 barra do Terminal Server → descarregar → pasta do robô → Abrir

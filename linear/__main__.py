@@ -122,7 +122,8 @@ def cmd_run(args) -> int:
         pedido = rotina.Pedido(
             menu=perfil["menu"], modelo_filtro=perfil["modelo_filtro"], filiais=[f], de=de, ate=ate,
             formato=formato, nome_servidor=f"{perfil['processo']}_F{f:02d}_{datetime.now():%H%M%S}",
-            pasta_servidor=geral["pasta_servidor"], espera=geral["espera_padrao_s"])
+            pasta_servidor=geral["pasta_servidor"], espera=geral["espera_padrao_s"],
+            opcao_relatorio=perfil.get("opcao_relatorio", "analitico"))
         antes = downloads.fotografar(pasta_dl)
         try:
             arquivo = rotina.executar(t, pedido)

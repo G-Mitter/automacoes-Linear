@@ -1,6 +1,6 @@
 # Fluxo — Automações Linear
 
-- **Versão:** 1.4
+- **Versão:** 1.5
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0
@@ -110,6 +110,11 @@ Cada passo usa **imagens de referência**: recortes em `assets/imagens/`, tirado
 - **Consolidado:** marca todas as filiais escolhidas num único relatório.
 - O robô sempre aplica "Desmarcar todos" primeiro, porque o modelo pode trazer uma filial salva.
 
+### E-04b — Opção do relatório
+| Robô procura | Robô faz | Próxima | Erro |
+|---|---|---|---|
+| Texto "Analítico" (ou "Sintético", conforme o perfil) | Clica na bolinha à esquerda e confere que ficou marcada. É preciso porque o ERP volta para "Sintético" quando a filial é aplicada | E-05 | Não marca após 3 cliques → falha |
+
 ### E-05 — Confirmar e aguardar
 | Robô procura | Robô faz | Próxima | Erro |
 |---|---|---|---|
@@ -120,7 +125,7 @@ Cada passo usa **imagens de referência**: recortes em `assets/imagens/`, tirado
 ### E-06 — Visualização do relatório
 | Robô procura | Robô faz | Próxima | Erro |
 |---|---|---|---|
-| Botão "Exportar Relatório" na barra superior | Clica | E-07 | Não aparece → falha |
+| Ícone de exportar (1º da barra, ao lado da impressora) | Clica no ícone, localizado a partir da impressora. É mais seguro que o botão "Exportar Relatório" | E-07 | Janela Exportar não abre → falha |
 
 ### E-07 — Exportar (janela de salvar **no servidor**)
 | Robô procura | Robô faz | Próxima | Erro |
@@ -173,6 +178,7 @@ Só para referência e para não atrapalhar a evolução do projeto:
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado (inclui as regras "modelo não encontrado = falha sem retentativa" e "SEM DADOS ≠ falha") |
+| 1.5 | 2026-11-10 | E-04b: remarcar a opção Analítico/Sintético depois das filiais (o ERP volta para Sintético); E-06: usar o ícone de exportar ao lado da impressora |
 | 1.4 | 2026-11-10 | E-07/E-08: o robô navega até a pasta do robô digitando o caminho e confere a imagem `pasta_robo` antes de apagar, salvar ou abrir |
 | 1.3 | 2026-11-10 | E-03: botão Posicionar; E-07: limpeza da pasta do robô no servidor antes de salvar (RN-13) |
 | 1.2 | 2026-11-10 | E-08: abrir a barra recolhida do Terminal Server (topo central) e clicar no ícone "descarregar" antes da janela "Descarregar arquivo" |

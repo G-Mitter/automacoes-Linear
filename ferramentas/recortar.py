@@ -32,6 +32,8 @@ REGIOES = {
     "exp_label_nome": [480, 460, 120, 45],
     "exp_label_tipo": [480, 485, 120, 45],
     "desc_label_nome": [500, 515, 120, 45],
+    "vis_icone_impressora": [0, 80, 200, 30],
+    "exp_titulo": [400, 105, 400, 40],
 }
 
 # Tipo de arquivo na janela Exportar: escolhido pelo teclado (posição na lista).
@@ -50,6 +52,8 @@ RECORTES = [
     ("abc_label_de", "tela_abc_164212", (680, 334, 712, 351), "abc", "Rótulo De: (campo à direita)"),
     ("abc_label_ate", "tela_abc_164212", (811, 334, 837, 351), "abc", "Rótulo Até: (campo à direita)"),
     ("abc_label_filial", "tela_abc_164212", (946, 334, 979, 351), "abc", "Rótulo Filial: (campo e botão + à direita)"),
+    ("abc_label_analitico", "tela_abc_164212", (806, 680, 858, 695), "abc", "Texto Analítico (bolinha 9 px à esquerda)"),
+    ("abc_label_sintetico", "tela_abc_164212", (806, 664, 856, 679), "abc", "Texto Sintético (bolinha 9 px à esquerda)"),
     ("abc_btn_confirma", "tela_abc_164212", (1141, 797, 1214, 819), "abc", "Botão Confirma"),
     ("abc_btn_sair", "tela_abc_164212", (1217, 797, 1286, 819), "abc", "Botão Sair"),
     # E-03 janela Filtro de Relatórios
@@ -62,7 +66,8 @@ RECORTES = [
     ("filial_btn_desmarcar_todos", "filial_lista_164352", (786, 673, 901, 692), "filial", "Botão Desmarcar todos"),
     ("filial_btn_confirmar", "filial_lista_164352", (1082, 673, 1151, 692), "filial", "Botão Confirmar"),
     # E-06 visualização
-    ("vis_btn_exportar", "visualizacao_164628", (466, 85, 581, 102), "visualizacao", "Botão Exportar Relatório"),
+    ("vis_btn_exportar", "visualizacao_164628", (466, 85, 581, 102), "visualizacao", "Botão Exportar Relatório (só para conferir a tela)"),
+    ("vis_icone_impressora", "visualizacao_164628", (33, 84, 54, 104), "visualizacao", "Ícone impressora; o ícone de exportar fica 28 px à esquerda"),
     # E-07 janela Exportar
     ("exp_titulo", "exportar_164953", (450, 113, 572, 130), "exportar", "Título Exportar Relatório"),
     ("exp_label_nome", "exportar_164953", (525, 475, 567, 492), "exportar", "Rótulo Nome: (campo à direita)"),

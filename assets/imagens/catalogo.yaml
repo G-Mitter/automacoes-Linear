@@ -38,6 +38,12 @@ imagens:
     - 320
     - 120
     - 45
+  abc_label_analitico:
+    descricao: Texto Analítico (bolinha 9 px à esquerda)
+    tela: abc
+  abc_label_sintetico:
+    descricao: Texto Sintético (bolinha 9 px à esquerda)
+    tela: abc
   abc_btn_confirma:
     descricao: Botão Confirma
     tela: abc
@@ -76,16 +82,29 @@ imagens:
     - 250
     - 80
   vis_btn_exportar:
-    descricao: Botão Exportar Relatório
+    descricao: Botão Exportar Relatório (só para conferir a tela)
     tela: visualizacao
     regiao:
     - 400
     - 80
     - 300
     - 30
+  vis_icone_impressora:
+    descricao: Ícone impressora; o ícone de exportar fica 28 px à esquerda
+    tela: visualizacao
+    regiao:
+    - 0
+    - 80
+    - 200
+    - 30
   exp_titulo:
     descricao: Título Exportar Relatório
     tela: exportar
+    regiao:
+    - 400
+    - 105
+    - 400
+    - 40
   exp_label_nome:
     descricao: 'Rótulo Nome: (campo à direita)'
     tela: exportar

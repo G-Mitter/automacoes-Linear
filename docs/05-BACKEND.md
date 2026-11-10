@@ -1,6 +1,6 @@
 # Esquema de Backend — Automações Linear
 
-- **Versão:** 1.3
+- **Versão:** 1.4
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0, Fluxo v1.0
@@ -41,6 +41,7 @@ Cada "tabela" abaixo é um tipo de arquivo. Os campos já foram pensados para vi
 | rotina | texto | sim | — | → `Rotina.id` (ex.: `relatorio_padrao`) |
 | menu | lista de textos | sim | — | Passos do menu (nomes das imagens). Ex.: `[menu_relatorios, menu_curva_abc]` |
 | modelo_filtro | texto | sim | — | Nome do modelo salvo no ERP |
+| opcao_relatorio | `analitico` \| `sintetico` | não | `analitico` | Marcada pelo robô depois das filiais |
 | formato | `pdf` \| `xlsx` \| `ambos` | sim | `xlsx` | Padrão; pode ser trocado na execução |
 | modo_filiais | `individual` \| `por_grupo` \| `consolidado` | sim | `individual` | Padrão; pode ser trocado na execução |
 | filiais_padrao | lista de inteiros e/ou nomes de grupo, ou `todas` | sim | `todas` | Precisa estar contida em `Geral.filiais_ativas` |
@@ -159,6 +160,7 @@ Na interface futura, se houver mais de um usuário, entra um perfil **Visualizad
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
+| 1.4 | 2026-11-10 | `opcao_relatorio` no Perfil |
 | 1.3 | 2026-11-10 | `pausa_entre_acoes_ms` em Geral |
 | 1.2 | 2026-11-10 | Catálogo de imagens com regiões, posições fixas e tipos de exportação; `pasta_servidor` em Geral |
 | 1.1 | 2026-11-10 | `grupos` em Geral; formato `ambos`; modo `por_grupo`; período e escopo na execução |
