@@ -1,6 +1,6 @@
 # TRD — Automações Linear (requisitos técnicos)
 
-- **Versão:** 1.0
+- **Versão:** 1.1
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0
@@ -100,19 +100,18 @@ automacaoLinear/
 2. No PowerShell, rode uma vez:
    ```bash
    cd C:\repositorios\automacaoLinear
-   python -m venv .venv
-   .venv\Scripts\activate
-   pip install -r requirements.txt
+   py -3.13 -m venv .venv
+   .venv\Scripts\python -m pip install -r requirements.txt
    copy .env.example .env
    ```
    Depois, preencha `TELEGRAM_TOKEN` e `TELEGRAM_CHAT_ID` no `.env`.
-3. Para executar:
+3. Para executar, use o atalho `linear.cmd`. Ele chama o Python do `.venv` sem precisar ativar o ambiente, porque o PowerShell deste PC bloqueia scripts `.ps1`:
    ```bash
-   python -m linear run curva_abc --filiais 3,4,6 --modo individual
+   .\linear run curva_abc --filiais 3,4,6 --modo individual
    ```
 4. Para rodar de novo só as filiais que falharam (RF-15):
    ```bash
-   python -m linear rerun <id_execucao>
+   .\linear rerun <id_execucao>
    ```
 
 **Variáveis (`.env`):** `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`.
@@ -136,3 +135,4 @@ automacaoLinear/
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado; resolução 1920x1080 registrada |
+| 1.1 | 2026-11-10 | Execução pelo atalho `linear.cmd` (o PowerShell bloqueia o `activate`); `rich` adicionado às dependências |
