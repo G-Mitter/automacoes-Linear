@@ -153,7 +153,7 @@ def executar(t: Tela, p: Pedido) -> str:
     t.tecla("ctrl", "a")
     t.digitar(p.nome_servidor)
     t.tecla("enter")                           # Salvar
-    t.esperar_sumir("exp_titulo", 60)
+    t.esperar_sumir("exp_titulo", 20)
     time.sleep(3)                              # "Aguarde enquanto o documento é processado"
 
     # E-08 barra do Terminal Server → descarregar → pasta do robô → Abrir
