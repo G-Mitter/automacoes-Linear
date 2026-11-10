@@ -98,7 +98,7 @@ class Tela:
 
     def clicar_xy(self, x: int, y: int, cliques: int = 1) -> None:
         """Move, pausa e clica: pelo Terminal Server, clique "instantâneo" às vezes se perde."""
-        pyautogui.moveTo(x, y, duration=0.15)
+        pyautogui.moveTo(int(x), int(y), duration=0.15)
         time.sleep(0.1)
         for _ in range(cliques):
             pyautogui.mouseDown()
@@ -124,7 +124,8 @@ class Tela:
             time.sleep(self.pausa)
 
     def cor(self, x: int, y: int) -> tuple[int, int, int]:
-        return pyautogui.pixel(x, y)
+        # posições vindas do OpenCV são numpy.int64; o Windows exige int comum
+        return pyautogui.pixel(int(x), int(y))
 
     # ---------- registro ----------
     def print_tela(self, motivo: str) -> Path:
