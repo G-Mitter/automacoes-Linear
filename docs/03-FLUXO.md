@@ -1,6 +1,6 @@
 # Fluxo — Automações Linear
 
-- **Versão:** 1.3
+- **Versão:** 1.4
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0
@@ -125,7 +125,7 @@ Cada passo usa **imagens de referência**: recortes em `assets/imagens/`, tirado
 ### E-07 — Exportar (janela de salvar **no servidor**)
 | Robô procura | Robô faz | Próxima | Erro |
 |---|---|---|---|
-| Janela "Exportar Relatório" | Garante que está na pasta do robô no servidor (RN-13) e **apaga todos os arquivos dela**: clica na lista de arquivos, Ctrl+A, Delete e confirma, se o Windows pedir | Campos Nome e Tipo | Não consegue entrar na pasta do robô → falha **sem apagar nada** |
+| Janela "Exportar Relatório" | **Ir para a pasta do robô:** digita `%USERPROFILE%\Desktop\robo_linear` no campo **Nome** e aperta Enter. Depois confere a imagem `pasta_robo` (barra de endereço em Desktop › robo_linear). Só então **apaga todos os arquivos dela** (RN-13): clica na lista de arquivos, Ctrl+A, Delete e confirma, se o Windows pedir | Campos Nome e Tipo | Não consegue entrar na pasta do robô → falha **sem apagar nada** |
 | Campos Nome e Tipo | Escolhe o **Tipo** (PDF ou "Microsoft Excel - Somente dados (*.xlsx)"), digita um nome único (`<processo>_<escopo>_<horário>`) e clica em **Salvar**. No formato "ambos", repete E-07 e E-08 para o segundo formato na mesma visualização | Espera o "Aguarde enquanto o documento é processado" sumir | Tipo não encontrado → falha |
 
 ### E-08 — Descarregar arquivo (servidor → PC)
@@ -133,7 +133,7 @@ Cada passo usa **imagens de referência**: recortes em `assets/imagens/`, tirado
 |---|---|---|---|
 | Aba recolhida (seta "⌄") no **topo central** da tela, da barra do Terminal Server | Clica na aba, que mostra a barra de ícones | Ícone **"descarregar"** (nuvem com seta para baixo) | Barra não abre → falha |
 | Ícone "descarregar" na barra | Clica | Janela "Descarregar arquivo" | Ícone não aparece → falha |
-| Janela "Descarregar arquivo" (abre na pasta do servidor onde E-07 salvou, ex.: Desktop › criar pasta) | Digita o nome do arquivo salvo em E-07 no campo **Nome** e clica em **Abrir** | O Chrome baixa o arquivo para `C:\Users\TI\Downloads` | Arquivo não chega em 60 s → falha |
+| Janela "Descarregar arquivo" (pode abrir em outra pasta, como o Desktop) | **Ir para a pasta do robô:** digita `%USERPROFILE%\Desktop\robo_linear` no campo **Nome** e aperta Enter. Depois confere a imagem `pasta_robo` (barra de endereço em Desktop › robo_linear). Depois digita o nome do arquivo salvo em E-07 no campo **Nome** e clica em **Abrir** | O Chrome baixa o arquivo para `C:\Users\TI\Downloads` | Arquivo não chega em 60 s → falha |
 
 **Depois do download:** o robô renomeia e move o arquivo para `<pasta base>\<Processo>\` (RN-03 a RN-05), fecha a visualização e a tela do relatório e volta para E-01.
 
@@ -173,6 +173,7 @@ Só para referência e para não atrapalhar a evolução do projeto:
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado (inclui as regras "modelo não encontrado = falha sem retentativa" e "SEM DADOS ≠ falha") |
+| 1.4 | 2026-11-10 | E-07/E-08: o robô navega até a pasta do robô digitando o caminho e confere a imagem `pasta_robo` antes de apagar, salvar ou abrir |
 | 1.3 | 2026-11-10 | E-03: botão Posicionar; E-07: limpeza da pasta do robô no servidor antes de salvar (RN-13) |
 | 1.2 | 2026-11-10 | E-08: abrir a barra recolhida do Terminal Server (topo central) e clicar no ícone "descarregar" antes da janela "Descarregar arquivo" |
 | 1.1 | 2026-11-10 | Caminho real da Curva ABC; modelo via botão "Filtros"; novo passo E-03b (período); grupos e modo por grupo; formato "ambos"; opções `--de/--ate/--formato` |

@@ -68,7 +68,7 @@ RECORTES = [
     ("exp_label_tipo", "exportar_164953", (534, 500, 567, 517), "exportar", "Rótulo Tipo: (lista à direita)"),
     # E-08 barra do Terminal Server e Descarregar arquivo
     ("desc_titulo", "descarregar_170037", (424, 128, 536, 145), "descarregar", "Título Descarregar arquivo"),
-    ("desc_pasta_robo", "descarregar_170037", (560, 160, 700, 177), "descarregar", "Caminho Desktop > robo_linear"),
+    ("pasta_robo", "descarregar_170037", (560, 160, 700, 177), "pasta_robo", "Barra de endereço em Desktop > robo_linear (confirma a pasta antes de apagar/salvar/abrir)"),
     ("desc_label_nome", "descarregar_170037", (546, 529, 589, 546), "descarregar", "Rótulo Nome: (campo à direita)"),
     ("desc_btn_abrir", "descarregar_170037", (881, 556, 969, 581), "descarregar", "Botão Abrir"),
 ]

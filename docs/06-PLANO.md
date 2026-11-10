@@ -1,6 +1,6 @@
 # Plano de Implantação — Automações Linear
 
-- **Versão:** 1.5
+- **Versão:** 1.6
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD, TRD, Fluxo, Design e Backend v1.0
@@ -16,7 +16,7 @@
 | Etapa | Resumo | Status |
 |---|---|---|
 | E1 | Esqueleto do projeto + GitHub + pré-checagem | concluída |
-| E2 | Captura das imagens de referência da Curva ABC | em andamento |
+| E2 | Captura das imagens de referência da Curva ABC | concluída |
 | E3 | Rotina da Curva ABC para 1 filial (até baixar no PC) | pendente |
 | E4 | Organizar o arquivo (nome + pasta) | pendente |
 | E5 | Várias filiais: individual, por grupo e consolidado + formato "ambos" + histórico + resumo | pendente |
@@ -154,6 +154,7 @@
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
 | 1.1 | 2026-11-10 | E1 em andamento |
+| 1.6 | 2026-11-10 | E2 testada pelo usuário e concluída. A imagem `pasta_robo` passa a ser conferida depois da navegação, e será testada na E3 |
 | 1.5 | 2026-11-10 | E2: 26 recortes validados contra os prints. Barra do Terminal Server por posição fixa; tipo de arquivo escolhido pelo teclado; nomes das telas para o `checar --tela` |
 | 1.4 | 2026-11-10 | E2 em andamento. Captura por print de tela inteira (`.\linear capturar`) e recorte feito pelo Claude |
 | 1.3 | 2026-11-10 | E3 passa a incluir o período (`--de/--ate`); E5 inclui grupos, modo por grupo e formato "ambos" |
