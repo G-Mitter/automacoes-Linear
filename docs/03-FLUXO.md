@@ -1,6 +1,6 @@
 # Fluxo — Automações Linear
 
-- **Versão:** 1.1
+- **Versão:** 1.2
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0
@@ -130,7 +130,9 @@ Cada passo usa **imagens de referência**: recortes em `assets/imagens/`, tirado
 ### E-08 — Descarregar arquivo (servidor → PC)
 | Robô procura | Robô faz | Próxima | Erro |
 |---|---|---|---|
-| Janela "Descarregar arquivo" | Digita o nome do arquivo salvo em E-07 no campo **Nome** e clica em **Abrir** | O Chrome baixa o arquivo para `C:\Users\TI\Downloads` | Arquivo não chega em 60 s → falha |
+| Aba recolhida (seta "⌄") no **topo central** da tela, da barra do Terminal Server | Clica na aba, que mostra a barra de ícones | Ícone **"descarregar"** (nuvem com seta para baixo) | Barra não abre → falha |
+| Ícone "descarregar" na barra | Clica | Janela "Descarregar arquivo" | Ícone não aparece → falha |
+| Janela "Descarregar arquivo" (abre na pasta do servidor onde E-07 salvou, ex.: Desktop › criar pasta) | Digita o nome do arquivo salvo em E-07 no campo **Nome** e clica em **Abrir** | O Chrome baixa o arquivo para `C:\Users\TI\Downloads` | Arquivo não chega em 60 s → falha |
 
 **Depois do download:** o robô renomeia e move o arquivo para `<pasta base>\<Processo>\` (RN-03 a RN-05), fecha a visualização e a tela do relatório e volta para E-01.
 
@@ -170,4 +172,5 @@ Só para referência e para não atrapalhar a evolução do projeto:
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado (inclui as regras "modelo não encontrado = falha sem retentativa" e "SEM DADOS ≠ falha") |
+| 1.2 | 2026-11-10 | E-08: abrir a barra recolhida do Terminal Server (topo central) e clicar no ícone "descarregar" antes da janela "Descarregar arquivo" |
 | 1.1 | 2026-11-10 | Caminho real da Curva ABC; modelo via botão "Filtros"; novo passo E-03b (período); grupos e modo por grupo; formato "ambos"; opções `--de/--ate/--formato` |
