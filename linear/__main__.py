@@ -3,12 +3,14 @@ from __future__ import annotations
 
 import argparse
 import sys
+from datetime import date, datetime, timedelta
+from pathlib import Path
 
 import pyautogui
 from rich.console import Console
 from rich.table import Table
 
-from . import checagem, config, imagens
+from . import checagem, config, downloads, imagens
 
 pyautogui.FAILSAFE = True  # mouse no canto superior esquerdo = parada de emergência (RF-14)
 console = Console()
@@ -68,6 +70,75 @@ def cmd_capturar(args) -> int:
     return 0
 
 
+def _data(texto: str) -> date:
+    return datetime.strptime(texto, "%Y-%m-%d").date()
+
+
+def cmd_run(args) -> int:
+    """E3: executa a rotina para cada filial, uma por vez (modo individual, sem retentativas)."""
+    from .rotinas import relatorio_padrao as rotina
+    from .tela import ErroConfiguracao, Tela, TelaErro
+
+    geral = config.carregar_geral()
+    perfis = config.carregar_perfis()
+    perfil = perfis.get(args.perfil)
+    if not perfil:
+        console.print(f"[red]Perfil '{args.perfil}' não existe.[/] Disponíveis: {', '.join(perfis)}")
+        return 1
+    erros = config.validar_perfil(perfil, geral)
+    try:
+        filiais = config.resolver_filiais(args.filiais or perfil.get("filiais_padrao"), geral)
+        fora = set(filiais) - set(geral["filiais_ativas"])
+        if fora:
+            erros.append(f"filiais fora da lista ativa: {sorted(fora)}")
+    except ValueError as e:
+        erros.append(str(e))
+    formato = args.formato or perfil["formato"]
+    if formato == "ambos":
+        erros.append("formato 'ambos' chega na etapa E5; use pdf ou xlsx")
+    ontem = date.today() - timedelta(days=1)
+    de = args.de or ontem
+    ate = args.ate or de
+    if de > ate:
+        erros.append("a data De é maior que a data Até")
+    for item, ok, detalhe in checagem.checar():
+        if not ok and item in ("Resolução", "Escala do Windows", "Pasta Downloads"):
+            erros.append(f"{item}: {detalhe}")
+    if erros:
+        for e in erros:
+            console.print(f"[red]❌ {e}[/]")
+        return 1
+
+    console.print(f"[bold]{perfil['nome']}[/] · filiais {filiais} · {de:%d/%m/%Y} a {ate:%d/%m/%Y} · {formato}")
+    console.print("Solte o mouse. Para parar: leve o mouse ao [bold]canto superior esquerdo[/].")
+    imagens.contagem(5, "Começando", console.print)
+
+    t = Tela(geral["confianca_imagem"], depurar=args.depurar, avisar=console.print)
+    pasta_dl = Path(geral["pasta_downloads"])
+    falhas = 0
+    for f in filiais:
+        console.print(f"[blue]⏳ F{f:02d}[/]")
+        pedido = rotina.Pedido(
+            menu=perfil["menu"], modelo_filtro=perfil["modelo_filtro"], filiais=[f], de=de, ate=ate,
+            formato=formato, nome_servidor=f"{perfil['processo']}_F{f:02d}_{datetime.now():%H%M%S}",
+            pasta_servidor=geral["pasta_servidor"], espera=geral["espera_padrao_s"])
+        antes = downloads.fotografar(pasta_dl)
+        try:
+            arquivo = rotina.executar(t, pedido)
+            baixado = downloads.esperar_novo(pasta_dl, antes, arquivo, geral["espera_download_s"])
+            console.print(f"[green]✅ F{f:02d}[/] {baixado}")
+            rotina.fechar_telas(t)
+        except pyautogui.FailSafeException:
+            console.print("[yellow]⚠️ Parada de emergência acionada. Execução interrompida.[/]")
+            return 2
+        except (TelaErro, ErroConfiguracao, TimeoutError) as e:
+            falhas += 1
+            prt = t.print_tela(f"erro_F{f:02d}")
+            console.print(f"[red]❌ F{f:02d}[/] {e} · print: {prt}")
+            return 1   # E3: para no primeiro erro (retentativas chegam na E6)
+    return 0 if not falhas else 1
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="python -m linear", description="Automações Linear (SGLinear)")
     sub = parser.add_subparsers(dest="comando", required=True)
@@ -82,6 +153,14 @@ def main(argv=None) -> int:
     p.add_argument("nome", help="nome do print, ex.: tela_inicial")
     p.add_argument("--atraso", type=int, default=8, help="segundos antes do print (padrão 8)")
     p.set_defaults(func=cmd_capturar)
+    p = sub.add_parser("run", help="executa um perfil")
+    p.add_argument("perfil")
+    p.add_argument("--filiais", help="ex.: 3,4,6 ou seneto,60 ou todas")
+    p.add_argument("--de", type=_data, help="data inicial AAAA-MM-DD (padrão: ontem)")
+    p.add_argument("--ate", type=_data, help="data final AAAA-MM-DD (padrão: igual ao --de)")
+    p.add_argument("--formato", choices=["pdf", "xlsx", "ambos"])
+    p.add_argument("--depurar", action="store_true", help="tira um print a cada passo (logs/prints)")
+    p.set_defaults(func=cmd_run)
     args = parser.parse_args(argv)
     return args.func(args)
 

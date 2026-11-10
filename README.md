@@ -18,6 +18,8 @@ Não precisa ativar o ambiente: o atalho `linear.cmd` já usa o Python do `.venv
 cd C:\repositorios\automacaoLinear
 .\linear perfis   # lista os perfis
 .\linear checar   # confere tela (1920x1080, escala 100%) e configuração
+.\linear run curva_abc --filiais 3 --de 2026-11-09 --formato xlsx   # roda o relatório
+.\linear run curva_abc --filiais 3 --depurar   # idem, com print a cada passo em logs\prints
 ```
 
 **Parada de emergência:** leve o mouse ao canto superior esquerdo da tela.

@@ -20,6 +20,13 @@ def carregar_catalogo() -> dict[str, dict]:
     return (yaml.safe_load(CATALOGO.read_text(encoding="utf-8")) or {}).get("imagens", {})
 
 
+def carregar_catalogo_completo() -> dict:
+    """{imagens, posicoes_fixas, tipos_exportar}"""
+    if not CATALOGO.exists():
+        return {}
+    return yaml.safe_load(CATALOGO.read_text(encoding="utf-8")) or {}
+
+
 def contagem(segundos: int, msg: str, avisar=print) -> None:
     for s in range(segundos, 0, -1):
         avisar(f"{msg} em {s}s…")

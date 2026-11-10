@@ -19,6 +19,7 @@ IMAGENS = RAIZ / "assets" / "imagens"
 POSICOES_FIXAS = {
     "ts_aba_recolhida": {"x": 937, "y": 61, "descricao": "Aba recolhida da barra do Terminal Server"},
     "ts_icone_descarregar": {"x": 972, "y": 81, "descricao": "Ícone descarregar (nuvem com seta para baixo)"},
+    "vis_fechar": {"x": 1879, "y": 66, "descricao": "X da janela de visualização (só clicar com a visualização aberta!)"},
 }
 
 # Áreas de busca [x, y, largura, altura] para recortes que aparecem em mais de um lugar.

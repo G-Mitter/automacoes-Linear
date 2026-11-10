@@ -129,6 +129,10 @@ posicoes_fixas:
     x: 972
     y: 81
     descricao: Ícone descarregar (nuvem com seta para baixo)
+  vis_fechar:
+    x: 1879
+    y: 66
+    descricao: X da janela de visualização (só clicar com a visualização aberta!)
 tipos_exportar:
   pdf: 0
   csv: 1

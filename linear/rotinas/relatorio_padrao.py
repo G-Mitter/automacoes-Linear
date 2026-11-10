@@ -1,3 +1,179 @@
-"""Rotina de relatório padrão do SGLinear (implementada na E3)."""
+"""Rotina de relatório padrão do SGLinear (Fluxo E-01 a E-08).
 
-IMAGENS_NECESSARIAS: list[str] = []  # preenchida na E2
+Serve para relatórios com a mesma "cara" da Curva ABC: menu → Filtros/Posicionar →
+De/Até → Filial(+) → Confirma → visualização → Exportar → Descarregar.
+Os deslocamentos (dx/dy) foram medidos nos prints em 1920x1080.
+"""
+from __future__ import annotations
+
+import time
+from dataclasses import dataclass
+from datetime import date
+
+from ..tela import ErroConfiguracao, Tela, TelaErro
+
+IMAGENS_NECESSARIAS = [
+    "inicio_icones", "menu_relatorios", "menu_relatorios_gerenciais", "menu_curva_abc",
+    "abc_titulo", "abc_btn_filtros", "abc_label_de", "abc_label_ate", "abc_label_filial",
+    "abc_btn_confirma", "abc_btn_sair",
+    "filtros_titulo", "filtros_btn_pesquisar", "filtros_btn_posicionar",
+    "filial_label_pesquisa", "filial_btn_desmarcar_todos", "filial_btn_confirmar",
+    "vis_btn_exportar", "exp_titulo", "exp_label_nome", "exp_label_tipo",
+    "desc_titulo", "desc_label_nome", "pasta_robo",
+]
+
+EXTENSOES = {"pdf": "pdf", "xlsx": "xlsx"}
+AZUL_SELECAO = (0, 120, 215)   # faixa azul de linha selecionada no Windows
+
+
+@dataclass
+class Pedido:
+    menu: list[str]
+    modelo_filtro: str
+    filiais: list[int]
+    de: date
+    ate: date
+    formato: str                # pdf | xlsx
+    nome_servidor: str          # nome do arquivo no servidor, sem extensão
+    pasta_servidor: str         # ex.: robo_linear
+    espera: float = 30
+    espera_relatorio: float = 180
+
+
+def _perto(c1, c2, tol=40) -> bool:
+    return all(abs(a - b) <= tol for a, b in zip(c1, c2))
+
+
+def _data(d: date) -> str:
+    return d.strftime("%d%m%y")   # o campo aceita só os dígitos: 01/10/26 → 011026
+
+
+def _caminho_pasta(pasta: str) -> str:
+    return f"%USERPROFILE%\\Desktop\\{pasta}"
+
+
+def executar(t: Tela, p: Pedido) -> str:
+    """Faz E-01..E-08 e devolve o nome do arquivo (com extensão) que foi descarregado."""
+    ext = EXTENSOES[p.formato]
+
+    # E-01 tela inicial
+    t.passo("E-01 conferindo a tela inicial")
+    t.esperar("inicio_icones", 10)
+
+    # E-02 menu: Relatórios → (↓) Relatórios Gerenciais → (→) Curva ABC → Enter
+    t.passo("E-02 abrindo o menu do relatório")
+    t.clicar(p.menu[0], 10)
+    t.tecla("down")
+    t.esperar(p.menu[1], 5)
+    t.tecla("right")
+    t.esperar(p.menu[2], 5)
+    t.tecla("enter")
+    t.esperar("abc_titulo", p.espera)
+
+    # E-03 modelo de filtro: Filtros → digita → Pesquisar → linha azul → Posicionar
+    t.passo(f"E-03 aplicando o modelo '{p.modelo_filtro}'")
+    t.clicar("abc_btn_filtros")
+    t.esperar("filtros_titulo", 10)
+    pesq = t.esperar("filtros_btn_pesquisar", 5)
+    cx, cy = pesq.left + pesq.width // 2, pesq.top + pesq.height // 2
+    t.clicar_xy(cx - 300, cy)                 # campo "Digite a descrição do Filtro"
+    t.tecla("ctrl", "a")
+    t.digitar(p.modelo_filtro)
+    t.clicar_xy(cx, cy)                       # Pesquisar
+    time.sleep(1)
+    t.clicar_xy(cx - 338, cy + 37)            # 1ª linha da lista
+    time.sleep(0.5)
+    if not _perto(t.cor(cx - 153, cy + 37), AZUL_SELECAO):
+        t.print_tela("modelo_nao_encontrado")
+        raise ErroConfiguracao(f"modelo de filtro '{p.modelo_filtro}' não encontrado")
+    t.clicar("filtros_btn_posicionar")
+    t.esperar_sumir("filtros_titulo", 10)
+
+    # E-03b período (depois do modelo, para sobrescrever as datas salvas nele)
+    t.passo(f"E-03b período {p.de:%d/%m/%Y} a {p.ate:%d/%m/%Y}")
+    t.clicar("abc_label_de", dx=12, a_partir="direita")
+    t.digitar(_data(p.de))
+    t.clicar("abc_label_ate", dx=10, a_partir="direita")
+    t.digitar(_data(p.ate))
+
+    # E-04 filiais: + → Desmarcar todos → (digita, marca a 1ª linha) → Confirmar
+    t.passo(f"E-04 marcando filiais {p.filiais}")
+    t.clicar("abc_label_filial", dx=93, a_partir="direita")
+    rot = t.esperar("filial_label_pesquisa", 10)
+    lx, ly = rot.left + rot.width // 2, rot.top + rot.height // 2
+    t.clicar("filial_btn_desmarcar_todos")
+    for f in p.filiais:
+        t.clicar_xy(lx, ly + 22)              # campo de pesquisa
+        t.tecla("ctrl", "a")
+        t.digitar(str(f))
+        time.sleep(0.6)
+        t.clicar_xy(lx - 68, ly + 47)         # caixinha da 1ª linha
+        time.sleep(0.3)
+    if t.depurar:
+        t.print_tela("filiais_marcadas")
+    t.clicar("filial_btn_confirmar")
+    t.esperar_sumir("filial_label_pesquisa", 10)
+
+    # E-05 Confirma → espera a visualização
+    t.passo("E-05 gerando o relatório")
+    t.clicar("abc_btn_confirma")
+    t.esperar("vis_btn_exportar", p.espera_relatorio)
+
+    # E-06/E-07 Exportar → pasta do robô → apaga → tipo → nome → Salvar
+    t.passo(f"E-07 exportando {p.nome_servidor}.{ext}")
+    t.clicar("vis_btn_exportar")
+    t.esperar("exp_titulo", 15)
+    t.clicar("exp_label_nome", dx=100, a_partir="direita")
+    t.tecla("ctrl", "a")
+    t.digitar(_caminho_pasta(p.pasta_servidor))
+    t.tecla("enter")
+    t.esperar("pasta_robo", 10)               # só apaga com a pasta do robô confirmada
+    tit = t.esperar("exp_titulo", 5)
+    t.clicar_xy(tit.left + tit.width // 2 + 339, tit.top + tit.height // 2 + 229)  # lista de arquivos
+    t.tecla("ctrl", "a")
+    t.tecla("delete")
+    time.sleep(1)
+    t.clicar("exp_label_tipo", dx=100, a_partir="direita")   # abre a lista "Tipo"
+    time.sleep(0.3)
+    t.tecla("home")
+    t.tecla("down", vezes=t.tipos_exportar[p.formato])
+    t.tecla("enter")
+    t.clicar("exp_label_nome", dx=100, a_partir="direita")
+    t.tecla("ctrl", "a")
+    t.digitar(p.nome_servidor)
+    t.tecla("enter")                           # Salvar
+    t.esperar_sumir("exp_titulo", 15)
+    time.sleep(3)                              # "Aguarde enquanto o documento é processado"
+
+    # E-08 barra do Terminal Server → descarregar → pasta do robô → Abrir
+    t.passo("E-08 descarregando para o PC")
+    t.clicar_fixo("ts_aba_recolhida")
+    time.sleep(1.2)
+    t.clicar_fixo("ts_icone_descarregar")
+    t.esperar("desc_titulo", 15)
+    t.clicar("desc_label_nome", dx=100, a_partir="direita")
+    t.tecla("ctrl", "a")
+    t.digitar(_caminho_pasta(p.pasta_servidor))
+    t.tecla("enter")
+    t.esperar("pasta_robo", 10)
+    arquivo = f"{p.nome_servidor}.{ext}"
+    t.clicar("desc_label_nome", dx=100, a_partir="direita")
+    t.tecla("ctrl", "a")
+    t.digitar(arquivo)
+    t.tecla("enter")                           # Abrir
+    t.esperar_sumir("desc_titulo", 15)
+    return arquivo
+
+
+def fechar_telas(t: Tela, espera: float = 10) -> None:
+    """Fecha a visualização e a janela do relatório, voltando à tela inicial."""
+    if t.localizar("vis_btn_exportar"):
+        t.clicar_fixo("vis_fechar")
+        t.esperar_sumir("vis_btn_exportar", espera)
+    if t.localizar("abc_btn_sair"):
+        t.clicar("abc_btn_sair")
+        t.esperar_sumir("abc_titulo", espera)
+    t.esperar("inicio_icones", espera)
+
+
+__all__ = ["IMAGENS_NECESSARIAS", "Pedido", "executar", "fechar_telas", "TelaErro"]
