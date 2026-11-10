@@ -36,6 +36,9 @@ def checar() -> list[tuple[str, bool, str]]:
     dl = Path(geral["pasta_downloads"])
     res.append(("Pasta Downloads", dl.exists(), str(dl)))
 
+    erros_geral = config.validar_geral(geral)
+    res.append(("Grupos de filiais", not erros_geral, "; ".join(erros_geral) or f"{len(geral.get('grupos') or {})} grupo(s)"))
+
     perfis = config.carregar_perfis()
     res.append(("Perfis", bool(perfis), f"{len(perfis)} encontrado(s)"))
     for pid, perfil in perfis.items():

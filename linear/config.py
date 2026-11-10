@@ -11,8 +11,8 @@ PASTA_CONFIG = RAIZ / "config"
 PASTA_PERFIS = PASTA_CONFIG / "perfis"
 PASTA_IMAGENS = RAIZ / "assets" / "imagens"
 
-FORMATOS = {"pdf", "xlsx"}
-MODOS = {"individual", "consolidado"}
+FORMATOS = {"pdf", "xlsx", "ambos"}
+MODOS = {"individual", "por_grupo", "consolidado"}
 
 
 def carregar_geral() -> dict:
@@ -29,12 +29,35 @@ def carregar_perfis() -> dict[str, dict]:
 
 
 def resolver_filiais(valor, geral: dict) -> list[int]:
-    """Aceita 'todas', lista de inteiros ou texto '3,4,6'."""
+    """Aceita 'todas', ou lista/texto com números e nomes de grupo: '3,seneto,60'.
+
+    Lança ValueError para grupo desconhecido.
+    """
     if valor in (None, "todas"):
         return list(geral["filiais_ativas"])
     if isinstance(valor, str):
-        valor = [int(x) for x in valor.split(",") if x.strip()]
-    return [int(x) for x in valor]
+        valor = [x.strip() for x in valor.split(",") if x.strip()]
+    grupos = {nome.lower(): filiais for nome, filiais in (geral.get("grupos") or {}).items()}
+    filiais: list[int] = []
+    for item in valor:
+        texto = str(item).strip()
+        if texto.lower() == "todas":
+            novas = geral["filiais_ativas"]
+        elif texto.isdigit():
+            novas = [int(texto)]
+        elif texto.lower() in grupos:
+            novas = grupos[texto.lower()]
+        else:
+            raise ValueError(f"grupo ou filial desconhecido: {texto}")
+        filiais += [f for f in novas if f not in filiais]
+    return filiais
+
+
+def validar_geral(geral: dict) -> list[str]:
+    """Cada filial de grupo precisa estar em filiais_ativas."""
+    ativas = set(geral["filiais_ativas"])
+    return [f"grupo {nome}: filiais fora da lista ativa {sorted(set(fs) - ativas)}"
+            for nome, fs in (geral.get("grupos") or {}).items() if set(fs) - ativas]
 
 
 def validar_perfil(perfil: dict, geral: dict) -> list[str]:
@@ -53,8 +76,8 @@ def validar_perfil(perfil: dict, geral: dict) -> list[str]:
         fora = set(resolver_filiais(perfil.get("filiais_padrao"), geral)) - set(geral["filiais_ativas"])
         if fora:
             erros.append(f"filiais fora da lista ativa: {sorted(fora)}")
-    except ValueError:
-        erros.append("filiais_padrao inválido")
+    except ValueError as e:
+        erros.append(f"filiais_padrao inválido: {e}")
     try:
         rotina = importlib.import_module(f"linear.rotinas.{perfil.get('rotina')}")
         faltando = [n for n in getattr(rotina, "IMAGENS_NECESSARIAS", [])

@@ -2,7 +2,7 @@
 
 - **Versão:** 1.1
 - **Data:** 2026-11-10
-- **Status:** rascunho (mudança de escopo aguardando aprovação)
+- **Status:** aprovado
 
 ---
 

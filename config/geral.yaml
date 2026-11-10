@@ -10,3 +10,8 @@ espera_download_s: 60
 confianca_imagem: 0.9
 retencao_logs_dias: 90
 filiais_ativas: [3, 4, 6, 9, 12, 13, 14, 17, 18, 19, 20, 21, 30, 31, 60, 69, 71, 72, 73, 74, 75, 76]
+grupos:
+  Seneto: [3, 4, 6, 9, 12, 13, 14, 17, 18, 19, 20, 21]
+  Elenice: [60]
+  KazzaPop: [30, 31]
+  Arunas: [69, 71, 72, 73, 74, 75, 76]

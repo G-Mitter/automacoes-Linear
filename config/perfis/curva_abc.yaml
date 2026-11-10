@@ -1,10 +1,11 @@
-# Perfil provisório: menu e modelo_filtro serão definidos na E2 (D-01)
+# Curva ABC / Contribuição Marginal de Venda
 nome: Curva ABC
 processo: CurvaABC
 rotina: relatorio_padrao
-menu: [menu_relatorios, menu_curva_abc]
-modelo_filtro: A DEFINIR
-formato: xlsx
-modo_filiais: individual
-filiais_padrao: todas
+# Relatórios → Relatórios Gerenciais → Curva ABC / Contribuição Marginal de Venda
+menu: [menu_relatorios, menu_relatorios_gerenciais, menu_curva_abc]
+modelo_filtro: Curva ABC
+formato: xlsx              # pdf | xlsx | ambos
+modo_filiais: individual   # individual | por_grupo | consolidado
+filiais_padrao: todas      # todas, ou lista de números e/ou grupos
 ativo: true

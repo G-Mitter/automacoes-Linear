@@ -1,6 +1,6 @@
 # Plano de Implantação — Automações Linear
 
-- **Versão:** 1.3
+- **Versão:** 1.4
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD, TRD, Fluxo, Design e Backend v1.0
@@ -16,7 +16,7 @@
 | Etapa | Resumo | Status |
 |---|---|---|
 | E1 | Esqueleto do projeto + GitHub + pré-checagem | concluída |
-| E2 | Captura das imagens de referência da Curva ABC | pendente |
+| E2 | Captura das imagens de referência da Curva ABC | em andamento |
 | E3 | Rotina da Curva ABC para 1 filial (até baixar no PC) | pendente |
 | E4 | Organizar o arquivo (nome + pasta) | pendente |
 | E5 | Várias filiais: individual, por grupo e consolidado + formato "ambos" + histórico + resumo | pendente |
@@ -48,7 +48,7 @@
 ## E2 — Captura das imagens de referência (Curva ABC)
 - **Objetivo:** ter todos os recortes de tela de que a rotina precisa.
 - **O que será construído:**
-  - `ferramentas/capturar.py`: você posiciona o mouse sobre o elemento e aperta uma tecla para recortar e nomear a imagem;
+  - `.\linear capturar <nome>`: depois de uma contagem regressiva, tira um print da tela inteira (salvo em `capturas/`, fora do Git). O Claude recorta os elementos a partir desses prints;
   - `assets/imagens/catalogo.yaml`;
   - recortes da tela inicial, do menu até a Curva ABC, do campo de modelo, do Filial "+", de Desmarcar todos, de Confirmar, de Confirma, de Exportar Relatório, do Tipo PDF/Excel, de Salvar, de Descarregar arquivo, de Abrir e das duas mensagens de erro (se aparecerem);
   - `.\linear checar` passa a conferir se cada imagem é **encontrada na tela atual**, sem clicar.
@@ -154,5 +154,6 @@
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
 | 1.1 | 2026-11-10 | E1 em andamento |
+| 1.4 | 2026-11-10 | E2 em andamento. Captura por print de tela inteira (`.\linear capturar`) e recorte feito pelo Claude |
 | 1.3 | 2026-11-10 | E3 passa a incluir o período (`--de/--ate`); E5 inclui grupos, modo por grupo e formato "ambos" |
 | 1.2 | 2026-11-10 | E1 testada pelo usuário e concluída; execução via `.\linear` (atalho linear.cmd) |

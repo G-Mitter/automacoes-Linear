@@ -3,3 +3,4 @@ opencv-python==4.10.0.84
 pyyaml==6.0.2
 requests==2.32.3
 rich==13.9.4
+pillow==13.0.0

@@ -2,7 +2,7 @@
 
 - **Versão:** 1.1
 - **Data:** 2026-11-10
-- **Status:** rascunho (aguardando aprovação)
+- **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0, Fluxo v1.0
 
 ---
