@@ -74,15 +74,39 @@ class Tela:
         pos = self.esperar(nome, timeout)
         x = (pos.left + pos.width if a_partir == "direita" else pos.left + pos.width // 2) + dx
         y = pos.top + pos.height // 2 + dy
-        pyautogui.click(x, y, clicks=cliques, interval=0.1)
+        self.clicar_xy(x, y, cliques)
         return pos
 
+    def clicar_e_esperar(self, nome: str, esperado: str, timeout: float = 30,
+                         tentativas: int = 3, espera_cada: float = 5, assentar: float = 1.0, **kw):
+        """Clica em `nome` até `esperado` aparecer (o Terminal Server às vezes ignora cliques).
+
+        `assentar`: pausa antes do 1º clique, para a janela terminar de desenhar.
+        """
+        self.esperar(nome, timeout)
+        time.sleep(assentar)
+        for _ in range(tentativas):
+            self.clicar(nome, 5, **kw)
+            try:
+                return self.esperar(esperado, espera_cada)
+            except TelaErro:
+                if not self.localizar(nome):   # botão sumiu: a tela mudou, esperar mais um pouco
+                    return self.esperar(esperado, espera_cada)
+        raise TelaErro(f"clicou em '{nome}' {tentativas}x e '{esperado}' não apareceu")
+
     def clicar_xy(self, x: int, y: int, cliques: int = 1) -> None:
-        pyautogui.click(x, y, clicks=cliques, interval=0.1)
+        """Move, pausa e clica: pelo Terminal Server, clique "instantâneo" às vezes se perde."""
+        pyautogui.moveTo(x, y, duration=0.15)
+        time.sleep(0.1)
+        for _ in range(cliques):
+            pyautogui.mouseDown()
+            time.sleep(0.06)
+            pyautogui.mouseUp()
+            time.sleep(0.1)
 
     def clicar_fixo(self, nome: str) -> None:
         p = self.fixas[nome]
-        pyautogui.click(p["x"], p["y"])
+        self.clicar_xy(p["x"], p["y"])
 
     def digitar(self, texto: str) -> None:
         pyautogui.write(texto, interval=0.03)

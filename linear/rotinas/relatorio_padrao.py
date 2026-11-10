@@ -72,8 +72,7 @@ def executar(t: Tela, p: Pedido) -> str:
 
     # E-03 modelo de filtro: Filtros → digita → Pesquisar → linha azul → Posicionar
     t.passo(f"E-03 aplicando o modelo '{p.modelo_filtro}'")
-    t.clicar("abc_btn_filtros")
-    t.esperar("filtros_titulo", 10)
+    t.clicar_e_esperar("abc_btn_filtros", "filtros_titulo", assentar=1.5)
     pesq = t.esperar("filtros_btn_pesquisar", 5)
     cx, cy = pesq.left + pesq.width // 2, pesq.top + pesq.height // 2
     t.clicar_xy(cx - 300, cy)                 # campo "Digite a descrição do Filtro"
@@ -98,8 +97,7 @@ def executar(t: Tela, p: Pedido) -> str:
 
     # E-04 filiais: + → Desmarcar todos → (digita, marca a 1ª linha) → Confirmar
     t.passo(f"E-04 marcando filiais {p.filiais}")
-    t.clicar("abc_label_filial", dx=93, a_partir="direita")
-    rot = t.esperar("filial_label_pesquisa", 10)
+    rot = t.clicar_e_esperar("abc_label_filial", "filial_label_pesquisa", dx=93, a_partir="direita")
     lx, ly = rot.left + rot.width // 2, rot.top + rot.height // 2
     t.clicar("filial_btn_desmarcar_todos")
     for f in p.filiais:
@@ -116,13 +114,12 @@ def executar(t: Tela, p: Pedido) -> str:
 
     # E-05 Confirma → espera a visualização
     t.passo("E-05 gerando o relatório")
-    t.clicar("abc_btn_confirma")
-    t.esperar("vis_btn_exportar", p.espera_relatorio)
+    t.clicar_e_esperar("abc_btn_confirma", "vis_btn_exportar", tentativas=1,
+                       espera_cada=p.espera_relatorio)
 
     # E-06/E-07 Exportar → pasta do robô → apaga → tipo → nome → Salvar
     t.passo(f"E-07 exportando {p.nome_servidor}.{ext}")
-    t.clicar("vis_btn_exportar")
-    t.esperar("exp_titulo", 15)
+    t.clicar_e_esperar("vis_btn_exportar", "exp_titulo", assentar=1.5)
     t.clicar("exp_label_nome", dx=100, a_partir="direita")
     t.tecla("ctrl", "a")
     t.digitar(_caminho_pasta(p.pasta_servidor))
