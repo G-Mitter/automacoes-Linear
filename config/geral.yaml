@@ -1,6 +1,7 @@
 # Configuração geral (docs/05-BACKEND.md §1.1)
 pasta_base: 'D:\Relatorios'
 pasta_downloads: 'C:\Users\TI\Downloads'
+pasta_servidor: robo_linear   # pasta exclusiva do robô no Desktop do servidor (RN-13)
 resolucao: 1920x1080
 escala_windows: 100        # % de escala de tela do Windows
 tentativas: 3
