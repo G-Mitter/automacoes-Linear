@@ -1,6 +1,6 @@
 # Esquema de Backend — Automações Linear
 
-- **Versão:** 1.1
+- **Versão:** 1.2
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0, Fluxo v1.0
@@ -20,6 +20,7 @@ Cada "tabela" abaixo é um tipo de arquivo. Os campos já foram pensados para vi
 |---|---|---|---|---|
 | pasta_base | texto (caminho) | sim | `D:\Relatorios` | D-02 a confirmar |
 | pasta_downloads | texto (caminho) | sim | `C:\Users\TI\Downloads` | |
+| pasta_servidor | texto | sim | `robo_linear` | Pasta exclusiva do robô no Desktop do servidor (RN-13) |
 | resolucao | texto | sim | `1920x1080` | Conferida na pré-checagem |
 | tentativas | inteiro | sim | 3 | RN-07 |
 | espera_max_comunicacao_s | inteiro | sim | 180 | D-05 |
@@ -58,7 +59,10 @@ Cada "tabela" abaixo é um tipo de arquivo. Os campos já foram pensados para vi
 | arquivo | PNG | sim | Recorte tirado em 1920x1080 |
 | regiao (opcional) | x,y,l,a | não | Limita a busca a uma parte da tela, para ser mais rápido e seguro |
 
-Catálogo em `assets/imagens/catalogo.yaml` (nome → descrição → região).
+Catálogo em `assets/imagens/catalogo.yaml`, gerado por `ferramentas/recortar.py`. Ele tem três partes:
+- `imagens`: nome → descrição, tela e região de busca opcional. A região é usada quando o mesmo texto aparece em mais de um lugar, como "Nome:" ou "Relatórios".
+- `posicoes_fixas`: cliques por coordenada, em 1920x1080. São usados na barra do Terminal Server, que é semitransparente e muda de aparência conforme o fundo.
+- `tipos_exportar`: a posição de cada tipo de arquivo na lista "Tipo" da janela Exportar. O tipo é escolhido pelo teclado.
 
 ### 1.5 `Execucao` — `execucoes/<id>.json` (1 por execução, **fora do Git**)
 | Campo | Tipo | Obrig. | Padrão | Observação |
@@ -154,4 +158,5 @@ Na interface futura, se houver mais de um usuário, entra um perfil **Visualizad
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
+| 1.2 | 2026-11-10 | Catálogo de imagens com regiões, posições fixas e tipos de exportação; `pasta_servidor` em Geral |
 | 1.1 | 2026-11-10 | `grupos` em Geral; formato `ambos`; modo `por_grupo`; período e escopo na execução |

@@ -1,6 +1,6 @@
 # Plano de Implantação — Automações Linear
 
-- **Versão:** 1.4
+- **Versão:** 1.5
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD, TRD, Fluxo, Design e Backend v1.0
@@ -59,8 +59,8 @@
 - **RF/T/dados:** RF-02; E-01 a E-08; Imagem.
 - **Como testar:**
   1. Abra a tela da Curva ABC.
-  2. Rode `.\linear checar --tela relatorio`: cada imagem dessa tela deve mostrar ✅ "encontrada".
-  3. Repita na visualização e na janela de exportar.
+  2. Rode `.\linear checar --tela abc` e, nos 5 segundos de contagem, volte para o Chrome. Cada imagem dessa tela deve mostrar ✅ "encontrada".
+  3. Repita com cada tela aberta: `inicial`, `menu`, `filtros`, `filial`, `visualizacao`, `exportar` e `descarregar`.
   4. Revise os PNG em `assets/imagens/`: não pode haver dados de clientes, produtos ou valores.
 - **Pronto quando:** todas as imagens forem encontradas com confiança ≥ 0,9 e você tiver revisado os recortes.
 - **Risco:** médio. Algumas janelas podem abrir em posições diferentes, o que já é coberto por buscar na tela toda.
@@ -154,6 +154,7 @@
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
 | 1.1 | 2026-11-10 | E1 em andamento |
+| 1.5 | 2026-11-10 | E2: 26 recortes validados contra os prints. Barra do Terminal Server por posição fixa; tipo de arquivo escolhido pelo teclado; nomes das telas para o `checar --tela` |
 | 1.4 | 2026-11-10 | E2 em andamento. Captura por print de tela inteira (`.\linear capturar`) e recorte feito pelo Claude |
 | 1.3 | 2026-11-10 | E3 passa a incluir o período (`--de/--ate`); E5 inclui grupos, modo por grupo e formato "ambos" |
 | 1.2 | 2026-11-10 | E1 testada pelo usuário e concluída; execução via `.\linear` (atalho linear.cmd) |
