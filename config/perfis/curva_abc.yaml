@@ -1,0 +1,10 @@
+# Perfil provisório: menu e modelo_filtro serão definidos na E2 (D-01)
+nome: Curva ABC
+processo: CurvaABC
+rotina: relatorio_padrao
+menu: [menu_relatorios, menu_curva_abc]
+modelo_filtro: A DEFINIR
+formato: xlsx
+modo_filiais: individual
+filiais_padrao: todas
+ativo: true
