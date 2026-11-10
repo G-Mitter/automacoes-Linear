@@ -1,6 +1,6 @@
 # Esquema de Backend — Automações Linear
 
-- **Versão:** 1.2
+- **Versão:** 1.3
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0, Fluxo v1.0
@@ -27,6 +27,7 @@ Cada "tabela" abaixo é um tipo de arquivo. Os campos já foram pensados para vi
 | espera_padrao_s | inteiro | sim | 30 | Tempo máximo de cada passo |
 | espera_download_s | inteiro | sim | 60 | |
 | confianca_imagem | decimal 0–1 | sim | 0.9 | Precisão do reconhecimento de imagem |
+| pausa_entre_acoes_ms | inteiro | sim | 400 | Pausa após cada clique, tecla ou digitação. Aumente se o ERP perder cliques |
 | filiais_ativas | lista de inteiros | sim | as 22 do RN-01 | |
 | grupos | mapa nome → lista de filiais | sim | os 4 do RN-11 | Cada filial do grupo precisa estar em `filiais_ativas`. Nomes sem acento nem espaço (`Seneto`, `Elenice`, `KazzaPop`, `Arunas`) |
 | retencao_logs_dias | inteiro | sim | 90 | |
@@ -158,5 +159,6 @@ Na interface futura, se houver mais de um usuário, entra um perfil **Visualizad
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
+| 1.3 | 2026-11-10 | `pausa_entre_acoes_ms` em Geral |
 | 1.2 | 2026-11-10 | Catálogo de imagens com regiões, posições fixas e tipos de exportação; `pasta_servidor` em Geral |
 | 1.1 | 2026-11-10 | `grupos` em Geral; formato `ambos`; modo `por_grupo`; período e escopo na execução |

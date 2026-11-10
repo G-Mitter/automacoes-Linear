@@ -27,7 +27,7 @@ class ErroConfiguracao(TelaErro):
 
 
 class Tela:
-    def __init__(self, confianca: float, depurar: bool = False, avisar=print):
+    def __init__(self, confianca: float, depurar: bool = False, avisar=print, pausa_ms: int = 400):
         cat = imagens.carregar_catalogo_completo()
         self.imagens = cat.get("imagens", {})
         self.fixas = cat.get("posicoes_fixas", {})
@@ -36,6 +36,8 @@ class Tela:
         self.depurar = depurar
         self.avisar = avisar
         self._passo = 0
+        self.pausa = pausa_ms / 1000          # pausa após cada clique/tecla/digitação
+        pyautogui.PAUSE = max(0.15, self.pausa / 2)
 
     # ---------- procurar ----------
     def localizar(self, nome: str):
@@ -103,13 +105,15 @@ class Tela:
             time.sleep(0.06)
             pyautogui.mouseUp()
             time.sleep(0.1)
+        time.sleep(self.pausa)
 
     def clicar_fixo(self, nome: str) -> None:
         p = self.fixas[nome]
         self.clicar_xy(p["x"], p["y"])
 
     def digitar(self, texto: str) -> None:
-        pyautogui.write(texto, interval=0.03)
+        pyautogui.write(texto, interval=0.05)
+        time.sleep(self.pausa)
 
     def tecla(self, *teclas: str, vezes: int = 1) -> None:
         for _ in range(vezes):
@@ -117,6 +121,7 @@ class Tela:
                 pyautogui.hotkey(*teclas)
             else:
                 pyautogui.press(teclas[0])
+            time.sleep(self.pausa)
 
     def cor(self, x: int, y: int) -> tuple[int, int, int]:
         return pyautogui.pixel(x, y)

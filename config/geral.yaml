@@ -9,6 +9,7 @@ espera_max_comunicacao_s: 180
 espera_padrao_s: 30
 espera_download_s: 60
 confianca_imagem: 0.9
+pausa_entre_acoes_ms: 400   # pausa após cada clique/tecla (aumente se o ERP perder cliques)
 retencao_logs_dias: 90
 filiais_ativas: [3, 4, 6, 9, 12, 13, 14, 17, 18, 19, 20, 21, 30, 31, 60, 69, 71, 72, 73, 74, 75, 76]
 grupos:

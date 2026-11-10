@@ -113,7 +113,8 @@ def cmd_run(args) -> int:
     console.print("Solte o mouse. Para parar: leve o mouse ao [bold]canto superior esquerdo[/].")
     imagens.contagem(5, "Começando", console.print)
 
-    t = Tela(geral["confianca_imagem"], depurar=args.depurar, avisar=console.print)
+    t = Tela(geral["confianca_imagem"], depurar=args.depurar, avisar=console.print,
+             pausa_ms=geral.get("pausa_entre_acoes_ms", 400))
     pasta_dl = Path(geral["pasta_downloads"])
     falhas = 0
     for f in filiais:
