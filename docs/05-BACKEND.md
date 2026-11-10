@@ -1,8 +1,8 @@
 # Esquema de Backend — Automações Linear
 
-- **Versão:** 1.0
+- **Versão:** 1.1
 - **Data:** 2026-11-10
-- **Status:** aprovado
+- **Status:** rascunho (aguardando aprovação)
 - **Base:** PRD v1.0, TRD v1.0, Fluxo v1.0
 
 ---
@@ -27,6 +27,7 @@ Cada "tabela" abaixo é um tipo de arquivo. Os campos já foram pensados para vi
 | espera_download_s | inteiro | sim | 60 | |
 | confianca_imagem | decimal 0–1 | sim | 0.9 | Precisão do reconhecimento de imagem |
 | filiais_ativas | lista de inteiros | sim | as 22 do RN-01 | |
+| grupos | mapa nome → lista de filiais | sim | os 4 do RN-11 | Cada filial do grupo precisa estar em `filiais_ativas`. Nomes sem acento nem espaço (`Seneto`, `Elenice`, `KazzaPop`, `Arunas`) |
 | retencao_logs_dias | inteiro | sim | 90 | |
 
 ### 1.2 `Perfil` — `config/perfis/<id>.yaml` (1 por perfil, versionado)
@@ -38,9 +39,9 @@ Cada "tabela" abaixo é um tipo de arquivo. Os campos já foram pensados para vi
 | rotina | texto | sim | — | → `Rotina.id` (ex.: `relatorio_padrao`) |
 | menu | lista de textos | sim | — | Passos do menu (nomes das imagens). Ex.: `[menu_relatorios, menu_curva_abc]` |
 | modelo_filtro | texto | sim | — | Nome do modelo salvo no ERP |
-| formato | `pdf` \| `xlsx` | sim | `xlsx` | |
-| modo_filiais | `individual` \| `consolidado` | sim | `individual` | |
-| filiais_padrao | lista de inteiros ou `todas` | sim | `todas` | Precisa estar contida em `Geral.filiais_ativas` |
+| formato | `pdf` \| `xlsx` \| `ambos` | sim | `xlsx` | Padrão; pode ser trocado na execução |
+| modo_filiais | `individual` \| `por_grupo` \| `consolidado` | sim | `individual` | Padrão; pode ser trocado na execução |
+| filiais_padrao | lista de inteiros e/ou nomes de grupo, ou `todas` | sim | `todas` | Precisa estar contida em `Geral.filiais_ativas` |
 | ativo | booleano | sim | `true` | Perfil inativo não aparece para execução |
 
 ### 1.3 `Rotina` — código em `linear/rotinas/<id>.py`
@@ -65,6 +66,8 @@ Catálogo em `assets/imagens/catalogo.yaml` (nome → descrição → região).
 | id | texto | sim | `AAAA-MM-DD_HHMMSS` | Chave |
 | perfil_id | texto | sim | — | → `Perfil.id` |
 | modo_filiais | texto | sim | do perfil | O modo efetivamente usado |
+| formato | texto | sim | do perfil | O formato efetivamente usado |
+| periodo_de, periodo_ate | data | sim | ontem | RF-17 |
 | filiais | lista de inteiros | sim | — | As filiais pedidas |
 | origem | `run` \| `rerun` | sim | `run` | |
 | execucao_origem_id | texto | não | null | → `Execucao.id` quando for rerun |
@@ -77,10 +80,11 @@ Catálogo em `assets/imagens/catalogo.yaml` (nome → descrição → região).
 ### 1.6 `ItemExecucao` (dentro de `Execucao.itens`)
 | Campo | Tipo | Obrig. | Observação |
 |---|---|---|---|
-| filiais | lista de inteiros | sim | 1 filial (individual) ou todas (consolidado) |
+| escopo | texto | sim | `F03`, nome do grupo ou `Consolidado` (usado no nome do arquivo) |
+| filiais | lista de inteiros | sim | As filiais marcadas nesse relatório |
 | status | `ok` \| `falha` \| `sem_dados` \| `pendente` | sim | |
 | tentativas | inteiro | sim | |
-| arquivo_final | texto | não | Caminho final quando `ok` |
+| arquivos_finais | lista de textos | não | Caminhos finais quando `ok` (2 no formato "ambos") |
 | erros | lista de `{tentativa, passo (E-xx), tipo, mensagem, print}` | sim | Vazia quando não há erro |
 | inicio, fim | data-hora | sim | |
 
@@ -117,6 +121,7 @@ Na interface futura, se houver mais de um usuário, entra um perfil **Visualizad
   - todas as imagens necessárias existem;
   - as filiais pedidas estão em `filiais_ativas`;
   - o `formato` e o `modo_filiais` são válidos;
+  - os grupos citados existem e o período é válido (De ≤ Até);
   - a pasta base existe ou pode ser criada.
 
   Se qualquer item falhar, a execução é abortada **antes de clicar** e a mensagem diz o que corrigir.
@@ -149,3 +154,4 @@ Na interface futura, se houver mais de um usuário, entra um perfil **Visualizad
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
+| 1.1 | 2026-11-10 | `grupos` em Geral; formato `ambos`; modo `por_grupo`; período e escopo na execução |

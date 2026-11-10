@@ -1,6 +1,6 @@
 # Plano de Implantação — Automações Linear
 
-- **Versão:** 1.2
+- **Versão:** 1.3
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD, TRD, Fluxo, Design e Backend v1.0
@@ -19,7 +19,7 @@
 | E2 | Captura das imagens de referência da Curva ABC | pendente |
 | E3 | Rotina da Curva ABC para 1 filial (até baixar no PC) | pendente |
 | E4 | Organizar o arquivo (nome + pasta) | pendente |
-| E5 | Várias filiais: individual e consolidado + histórico + resumo | pendente |
+| E5 | Várias filiais: individual, por grupo e consolidado + formato "ambos" + histórico + resumo | pendente |
 | E6 | Tratamento de erros e retentativas | pendente |
 | E7 | Telegram + `rerun` + limpeza de logs | pendente |
 | E8 | Teste de aceitação com as 22 filiais | pendente |
@@ -31,15 +31,15 @@
 - **O que será construído:**
   - estrutura de pastas do TRD, `requirements.txt` (pyautogui, opencv-python, pyyaml, requests, rich), `.gitignore`, `.env.example` e `README`;
   - `config/geral.yaml` com as 22 filiais e `config/perfis/curva_abc.yaml` (provisório);
-  - CLI: `.inear perfis` e `.inear checar`;
+  - CLI: `.\linear perfis` e `.\linear checar`;
   - a checagem confere a resolução de 1920x1080, se os perfis e as filiais são válidos (validações do Backend §4) e se a pasta base existe;
   - parada de emergência ativa;
   - `git init`, primeiro commit e push para o GitHub.
 - **RF/T/dados:** RF-07, RF-14 (base); T-01; Geral e Perfil.
 - **Como testar:**
   1. `cd C:\repositorios\automacaoLinear`, depois `.venv\Scripts\activate`.
-  2. `.inear perfis` deve mostrar "Curva ABC" com os padrões.
-  3. `.inear checar` deve mostrar ✅ na resolução e ✅ na configuração.
+  2. `.\linear perfis` deve mostrar "Curva ABC" com os padrões.
+  3. `.\linear checar` deve mostrar ✅ na resolução e ✅ na configuração.
   4. Mude a escala do Windows para 125% e rode `checar` de novo: deve aparecer ❌ resolução. Depois volte para 100%.
   5. Abra o repositório no GitHub e confira que estão lá o código e os docs, mas não o `.env`.
 - **Pronto quando:** os 5 passos passarem.
@@ -51,7 +51,7 @@
   - `ferramentas/capturar.py`: você posiciona o mouse sobre o elemento e aperta uma tecla para recortar e nomear a imagem;
   - `assets/imagens/catalogo.yaml`;
   - recortes da tela inicial, do menu até a Curva ABC, do campo de modelo, do Filial "+", de Desmarcar todos, de Confirmar, de Confirma, de Exportar Relatório, do Tipo PDF/Excel, de Salvar, de Descarregar arquivo, de Abrir e das duas mensagens de erro (se aparecerem);
-  - `.inear checar` passa a conferir se cada imagem é **encontrada na tela atual**, sem clicar.
+  - `.\linear checar` passa a conferir se cada imagem é **encontrada na tela atual**, sem clicar.
 - **Dependências (você):**
   - o caminho do menu da Curva ABC (D-01);
   - o modelo de filtro salvo no ERP, com o nome dele;
@@ -59,7 +59,7 @@
 - **RF/T/dados:** RF-02; E-01 a E-08; Imagem.
 - **Como testar:**
   1. Abra a tela da Curva ABC.
-  2. Rode `.inear checar --tela relatorio`: cada imagem dessa tela deve mostrar ✅ "encontrada".
+  2. Rode `.\linear checar --tela relatorio`: cada imagem dessa tela deve mostrar ✅ "encontrada".
   3. Repita na visualização e na janela de exportar.
   4. Revise os PNG em `assets/imagens/`: não pode haver dados de clientes, produtos ou valores.
 - **Pronto quando:** todas as imagens forem encontradas com confiança ≥ 0,9 e você tiver revisado os recortes.
@@ -67,8 +67,9 @@
 
 ## E3 — Rotina da Curva ABC para 1 filial
 - **Objetivo:** o robô faz E-01 → E-08 sozinho para **uma filial** e o arquivo chega na pasta Downloads.
-- **O que será construído:** a camada de tela (`tela.py`, com esperas inteligentes) e a rotina `relatorio_padrao.py`. Comando: `.inear run curva_abc --filiais 3`.
-- **RF/T/dados:** RF-01 a RF-05; E-01 a E-08; Perfil.
+- **O que será construído:** a camada de tela (`tela.py`, com esperas inteligentes) e a rotina `relatorio_padrao.py`. Comando: `.\linear run curva_abc --filiais 3`.
+- **RF/T/dados:** RF-01 a RF-05, RF-17; E-01 a E-08 (incluindo E-03b); Perfil.
+- **Inclui:** as opções `--de`/`--ate` (padrão: ontem).
 - **Como testar:**
   1. Deixe o SGLinear na tela inicial e rode o comando.
   2. Solte o mouse e observe.
@@ -89,13 +90,14 @@
 - **Pronto quando:** os nomes, a pasta e os sufixos estiverem corretos.
 - **Risco:** baixo.
 
-## E5 — Várias filiais: individual e consolidado
-- **Objetivo:** rodar uma lista de filiais nos dois modos, com histórico e resumo.
+## E5 — Várias filiais: individual, por grupo e consolidado
+- **Objetivo:** rodar uma lista de filiais (números e/ou grupos) nos três modos, nos formatos PDF, Excel ou ambos, com histórico e resumo.
 - **O que será construído:** o orquestrador (sem retentativas ainda), `execucoes/<id>.json`, a barra de progresso e a tabela de resumo (Design §3).
-- **RF/T/dados:** RF-03, RF-11, RF-13; T-01, T-03; Execucao e ItemExecucao.
+- **RF/T/dados:** RF-03, RF-04, RF-11, RF-13, RF-18; T-01, T-03; Geral.grupos, Execucao e ItemExecucao.
+- **Testes extras:** `--filiais kazzapop --modo por_grupo` gera 1 arquivo `_KazzaPop`; `--formato ambos` gera PDF e Excel.
 - **Como testar:**
-  1. `.inear run curva_abc --filiais 3,4,6 --modo individual` deve gerar 3 arquivos (F03, F04, F06).
-  2. `.inear run curva_abc --filiais 3,4,6 --modo consolidado` deve gerar 1 arquivo, e o relatório deve mostrar as 3 filiais.
+  1. `.\linear run curva_abc --filiais 3,4,6 --modo individual` deve gerar 3 arquivos (F03, F04, F06).
+  2. `.\linear run curva_abc --filiais 3,4,6 --modo consolidado` deve gerar 1 arquivo, e o relatório deve mostrar as 3 filiais.
   3. Abra o JSON da execução e confira os status.
 - **Pronto quando:** os dois modos estiverem corretos e o resumo bater com os arquivos.
 - **Risco:** médio. A seleção de várias filiais (D-03) ainda precisa ser confirmada.
@@ -118,12 +120,12 @@
 
 ## E7 — Telegram + `rerun` + limpeza de logs
 - **Objetivo:** aviso no celular e refazer só o que falhou.
-- **O que será construído:** `telegram.py` (formato do Design §4), `.inear rerun <id>` e a limpeza dos logs com mais de 90 dias.
+- **O que será construído:** `telegram.py` (formato do Design §4), `.\linear rerun <id>` e a limpeza dos logs com mais de 90 dias.
 - **Dependências (você):** criar o bot no @BotFather e enviar o token e o chat_id. Eu passo o passo a passo.
 - **RF/T/dados:** RF-12, RF-15; T-02.
 - **Como testar:**
   1. Force uma falha, como na E6. A mensagem ❌ deve chegar no Telegram, seguida do resumo.
-  2. Rode `.inear rerun <id>`: só a filial que falhou roda de novo.
+  2. Rode `.\linear rerun <id>`: só a filial que falhou roda de novo.
   3. Desligue a internet: a automação deve continuar, com o aviso de falha no envio registrado no log.
 - **Pronto quando:** os 3 testes passarem.
 - **Risco:** baixo.
@@ -132,7 +134,7 @@
 - **Objetivo:** validar o uso real.
 - **O que será construído:** nada novo. Só ajustes finos de tempos e imagens, a versão final do README e a revisão dos documentos.
 - **Como testar:**
-  1. `.inear run curva_abc --filiais todas --modo individual`: 22 arquivos ou falhas registradas, sem a execução travar.
+  1. `.\linear run curva_abc --filiais todas --modo individual`: 22 arquivos ou falhas registradas, sem a execução travar.
   2. Repita em `--modo consolidado`.
   3. Repita em 3 dias diferentes.
 - **Pronto quando:** pelo menos 95% das filiais tiverem sucesso sem intervenção e toda falha estiver no log, no Telegram e no resumo.
@@ -152,4 +154,5 @@
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
 | 1.1 | 2026-11-10 | E1 em andamento |
+| 1.3 | 2026-11-10 | E3 passa a incluir o período (`--de/--ate`); E5 inclui grupos, modo por grupo e formato "ambos" |
 | 1.2 | 2026-11-10 | E1 testada pelo usuário e concluída; execução via `.\linear` (atalho linear.cmd) |

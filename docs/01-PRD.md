@@ -1,8 +1,8 @@
 # PRD — Automações Linear (SGLinear)
 
-- **Versão:** 1.0
+- **Versão:** 1.1
 - **Data:** 2026-11-10
-- **Status:** aprovado
+- **Status:** rascunho (mudança de escopo aguardando aprovação)
 
 ---
 
@@ -28,11 +28,11 @@ Plataforma de automações (RPA, ou seja, um "robô" que usa mouse e teclado com
 | ID | Funcionalidade | Prioridade |
 |---|---|---|
 | RF-01 | Executar uma **rotina** de relatório a partir da tela inicial do SGLinear já logado | Essencial |
-| RF-02 | Abrir a tela do relatório e selecionar o **modelo de filtro salvo** no ERP (botão "Gravar Novo"/lista de modelos) | Essencial |
-| RF-03 | Selecionar filiais: **modo consolidado** (várias filiais num arquivo) ou **modo individual** (um arquivo por filial) | Essencial |
-| RF-04 | Exportar o relatório no formato do perfil (**PDF** ou **Excel**), salvando no servidor | Essencial |
+| RF-02 | Abrir a tela do relatório e selecionar o **modelo de filtro salvo** no ERP (botão "Filtros" → lista "Filtro de Relatórios"). Os filtros fixos ficam no modelo; **período e filiais são preenchidos pelo robô** | Essencial |
+| RF-03 | Selecionar filiais (números, **grupos** ou todas), marcadas pelo próprio robô na lista do "+" do campo Filial. Três modos: **individual** (um arquivo por filial), **por grupo** (um arquivo por grupo) ou **consolidado** (tudo num arquivo) | Essencial |
+| RF-04 | Exportar o relatório em **PDF, Excel ou os dois**, escolhido a cada execução (o perfil traz um padrão), salvando no servidor | Essencial |
 | RF-05 | Transferir o arquivo do servidor para o PC pela janela "Descarregar arquivo" e localizar o download | Essencial |
-| RF-06 | Renomear e mover o arquivo para `<pasta base>\<Processo>\` com o nome `<Processo>_<AAAA-MM-DD>[_F<filial>].<ext>` | Essencial |
+| RF-06 | Renomear e mover o arquivo para `<pasta base>\<Processo>\` com o nome da RN-03 | Essencial |
 | RF-07 | **Perfis** de configuração: cada perfil define a rotina, o modelo de filtro, o formato, o modo das filiais, a lista padrão de filiais e o nome do processo | Essencial |
 | RF-08 | Tratar o erro **"perda de comunicação com o servidor"**: esperar a mensagem sumir (com tempo máximo) e continuar | Essencial |
 | RF-09 | Tratar o erro **mensagem vermelha**: fechar a mensagem, fechar e reabrir a tela do relatório, tentar de novo | Essencial |
@@ -42,12 +42,17 @@ Plataforma de automações (RPA, ou seja, um "robô" que usa mouse e teclado com
 | RF-13 | **Resumo da execução** (sucessos e falhas por filial), que o usuário usa para rodar de novo só o que falhou | Importante |
 | RF-14 | Botão/atalho para **interromper** a automação com segurança (ex.: mover o mouse para o canto da tela) | Importante |
 | RF-15 | Rodar de novo apenas as filiais que falharam numa execução anterior | Desejável |
+| RF-17 | Informar o **período (De/Até)** a cada execução; sem informar, o padrão é **ontem** (De = Até = ontem) | Essencial |
+| RF-18 | **Grupos de filiais** configuráveis (RN-11) para escolher várias filiais de uma vez | Essencial |
 | RF-16 | Interface visual para escolher a automação, o perfil e as filiais e ver o histórico/erros | Desejável (pós-teste; ver Fora do escopo) |
 
 ## 5. Regras de negócio
 - **RN-01 — Filiais ativas (22):** 3, 4, 6, 9, 12, 13, 14, 17, 18, 19, 20, 21, 30, 31, 60, 69, 71, 72, 73, 74, 75, 76. Essa lista fica numa configuração editável.
-- **RN-02:** a cada execução o usuário escolhe quais filiais entram e o modo (consolidado ou individual). O perfil traz uma escolha padrão.
-- **RN-03 — Nome do arquivo:** `<Processo>_<AAAA-MM-DD>.<ext>` no consolidado; `<Processo>_<AAAA-MM-DD>_F<filial com 2 dígitos>.<ext>` no individual (ex.: `CurvaABC_2026-11-10_F03.xlsx`). A data é a da execução.
+- **RN-02:** a cada execução o usuário escolhe as filiais (números e/ou grupos), o modo (individual, por grupo ou consolidado), o período e o formato. O perfil traz os padrões.
+- **RN-03 — Nome do arquivo:** `<Processo>_<período>_<escopo>.<ext>`.
+  - **Período:** `AAAA-MM-DD` quando De = Até; `AAAA-MM-DD_a_AAAA-MM-DD` quando é um intervalo.
+  - **Escopo:** `F03` (individual), o nome do grupo (por grupo, ex.: `Seneto`) ou `Consolidado`.
+  - Exemplos: `CurvaABC_2026-11-09_F03.xlsx`, `CurvaABC_2026-10-01_a_2026-10-31_Seneto.pdf`.
 - **RN-04 — Pasta:** cada processo tem sua subpasta dentro de uma pasta base configurável.
 - **RN-05:** se já existir um arquivo com o mesmo nome, o novo **não sobrescreve**. Ele ganha o sufixo `_2`, `_3`, etc.
 - **RN-06:** a execução começa sempre na tela inicial do SGLinear, com o usuário já logado. O robô **não digita login nem senha**.
@@ -55,6 +60,12 @@ Plataforma de automações (RPA, ou seja, um "robô" que usa mouse e teclado com
 - **RN-08:** variações de um mesmo relatório que só mudam filtros viram **perfis**, não código novo. Código novo só surge para um relatório com uma tela diferente (nova **rotina**).
 - **RN-09:** o arquivo só conta como sucesso depois de chegar ao PC e ser movido/renomeado.
 - **RN-10:** durante a execução, o PC fica dedicado ao robô (sem uso do mouse ou teclado por pessoas).
+- **RN-11 — Grupos de filiais** (configuração editável):
+  - **Seneto:** 3, 4, 6, 9, 12, 13, 14, 17, 18, 19, 20, 21 (as ativas entre 3 e 21);
+  - **Elenice:** 60;
+  - **KazzaPop:** 30, 31;
+  - **Arunas:** 69, 71, 72, 73, 74, 75, 76 (as ativas entre 68 e 76).
+- **RN-12 — Formato "os dois":** a mesma tela de visualização é exportada duas vezes (PDF e Excel). O item só conta como sucesso se os dois arquivos chegarem.
 
 ## 6. Fora do escopo (V1)
 1. **Interface visual** para gerenciar as automações. Fica para depois da fase de testes (RF-16). Na V1, a execução é por comando/atalho.
@@ -77,12 +88,12 @@ Plataforma de automações (RPA, ou seja, um "robô" que usa mouse e teclado com
 | Erros novos do ERP | Médio | Log com print + aviso no Telegram |
 
 ## 8. Dúvidas em aberto
-- D-01: caminho no menu do relatório de **Curva ABC** e nome do(s) modelo(s) de filtro a salvar (você vai enviar).
+- ~~D-01~~ (resolvida): Relatórios → Relatórios Gerenciais → Curva ABC / Contribuição Marginal de Venda; modelo "Curva ABC".
 - D-02: **pasta base** dos relatórios (sugestão: `D:\Relatorios\`).
-- D-03: no modo consolidado, a seleção de várias filiais é feita marcando-as na lista do "+" do campo Filial (como aparece no vídeo)?
+- ~~D-03~~ (resolvida): o robô marca as filiais na lista do "+" do campo Filial.
 - D-04: textos e aparência exatos das mensagens de erro ("perda de comunicação" e "mensagem vermelha"). Prints delas ajudam muito.
 - D-05: tempo máximo de espera para a "perda de comunicação" antes de contar como falha (sugestão: 3 minutos).
-- D-06: resolução da tela e zoom do Chrome usados no PC que vai rodar o robô.
+- ~~D-06~~ (resolvida): 1920x1080, escala 100%, zoom 100%.
 - D-07: o bot do Telegram ainda vai ser criado (token + chat). Os dados ficam num arquivo local fora do GitHub.
 
 ---
@@ -92,3 +103,4 @@ Plataforma de automações (RPA, ou seja, um "robô" que usa mouse e teclado com
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho a partir da entrevista e do vídeo do Relatório de Produtos |
 | 1.0 | 2026-11-10 | Aprovado pelo usuário |
+| 1.1 | 2026-11-10 | Período De/Até (RF-17), grupos de filiais (RF-18, RN-11), modo por grupo, formato PDF/Excel/ambos por execução (RN-12), novo padrão de nome (RN-03); D-01, D-03 e D-06 resolvidas |
