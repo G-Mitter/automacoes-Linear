@@ -1,6 +1,6 @@
 # Fluxo — Automações Linear
 
-- **Versão:** 1.2
+- **Versão:** 1.3
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0
@@ -93,7 +93,7 @@ Cada passo usa **imagens de referência**: recortes em `assets/imagens/`, tirado
 ### E-03 — Escolher o modelo de filtro
 | Robô procura | Robô faz | Próxima | Erro |
 |---|---|---|---|
-| Botão **"Filtros"** → janela "Filtro de Relatórios" | Digita o nome do modelo (ex.: "Curva ABC") em "Digite a descrição do Filtro", clica em **Pesquisar**, seleciona a linha e aplica o modelo (botão a confirmar na E2) | E-03b | Modelo não encontrado → FALHA **sem retentativa** (é erro de configuração) + aviso |
+| Botão **"Filtros"** → janela "Filtro de Relatórios" | Digita o nome do modelo (ex.: "Curva ABC") em "Digite a descrição do Filtro", clica em **Pesquisar**, seleciona a linha (fica com uma **faixa azul inteira** quando selecionada) e clica em **Posicionar** | E-03b | Modelo não encontrado → FALHA **sem retentativa** (é erro de configuração) + aviso |
 
 ### E-03b — Período
 | Robô procura | Robô faz | Próxima | Erro |
@@ -125,7 +125,8 @@ Cada passo usa **imagens de referência**: recortes em `assets/imagens/`, tirado
 ### E-07 — Exportar (janela de salvar **no servidor**)
 | Robô procura | Robô faz | Próxima | Erro |
 |---|---|---|---|
-| Janela "Exportar Relatório", campos Nome e Tipo | Escolhe o **Tipo** (PDF/Excel), digita um nome único (`<processo>_<escopo>_<horário>`) e clica em **Salvar**. No formato "ambos", repete E-07 e E-08 para o segundo formato na mesma visualização | Espera o "Aguarde enquanto o documento é processado" sumir | Tipo não encontrado → falha |
+| Janela "Exportar Relatório" | Garante que está na pasta do robô no servidor (RN-13) e **apaga todos os arquivos dela**: clica na lista de arquivos, Ctrl+A, Delete e confirma, se o Windows pedir | Campos Nome e Tipo | Não consegue entrar na pasta do robô → falha **sem apagar nada** |
+| Campos Nome e Tipo | Escolhe o **Tipo** (PDF ou "Microsoft Excel - Somente dados (*.xlsx)"), digita um nome único (`<processo>_<escopo>_<horário>`) e clica em **Salvar**. No formato "ambos", repete E-07 e E-08 para o segundo formato na mesma visualização | Espera o "Aguarde enquanto o documento é processado" sumir | Tipo não encontrado → falha |
 
 ### E-08 — Descarregar arquivo (servidor → PC)
 | Robô procura | Robô faz | Próxima | Erro |
@@ -172,5 +173,6 @@ Só para referência e para não atrapalhar a evolução do projeto:
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado (inclui as regras "modelo não encontrado = falha sem retentativa" e "SEM DADOS ≠ falha") |
+| 1.3 | 2026-11-10 | E-03: botão Posicionar; E-07: limpeza da pasta do robô no servidor antes de salvar (RN-13) |
 | 1.2 | 2026-11-10 | E-08: abrir a barra recolhida do Terminal Server (topo central) e clicar no ícone "descarregar" antes da janela "Descarregar arquivo" |
 | 1.1 | 2026-11-10 | Caminho real da Curva ABC; modelo via botão "Filtros"; novo passo E-03b (período); grupos e modo por grupo; formato "ambos"; opções `--de/--ate/--formato` |

@@ -1,6 +1,6 @@
 # PRD — Automações Linear (SGLinear)
 
-- **Versão:** 1.1
+- **Versão:** 1.2
 - **Data:** 2026-11-10
 - **Status:** aprovado
 
@@ -65,6 +65,7 @@ Plataforma de automações (RPA, ou seja, um "robô" que usa mouse e teclado com
   - **Elenice:** 60;
   - **KazzaPop:** 30, 31;
   - **Arunas:** 69, 71, 72, 73, 74, 75, 76 (as ativas entre 68 e 76).
+- **RN-13 — Pasta do robô no servidor:** o robô exporta sempre para uma pasta **exclusiva dele** no servidor (padrão: Desktop › `robo_linear`). Ao abrir a janela de exportar, ele **apaga tudo o que estiver nessa pasta** antes de salvar, para manter o servidor organizado. Como a pasta é exclusiva, não há risco de apagar arquivos de pessoas.
 - **RN-12 — Formato "os dois":** a mesma tela de visualização é exportada duas vezes (PDF e Excel). O item só conta como sucesso se os dois arquivos chegarem.
 
 ## 6. Fora do escopo (V1)
@@ -103,4 +104,5 @@ Plataforma de automações (RPA, ou seja, um "robô" que usa mouse e teclado com
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho a partir da entrevista e do vídeo do Relatório de Produtos |
 | 1.0 | 2026-11-10 | Aprovado pelo usuário |
+| 1.2 | 2026-11-10 | RN-13: pasta exclusiva do robô no servidor, limpa a cada exportação; modelo aplicado pelo botão "Posicionar" |
 | 1.1 | 2026-11-10 | Período De/Até (RF-17), grupos de filiais (RF-18, RN-11), modo por grupo, formato PDF/Excel/ambos por execução (RN-12), novo padrão de nome (RN-03); D-01, D-03 e D-06 resolvidas |
