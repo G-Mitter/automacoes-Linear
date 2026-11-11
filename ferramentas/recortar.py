@@ -72,6 +72,8 @@ RECORTES = [
     ("exp_titulo", "exportar_164953", (450, 113, 572, 130), "exportar", "Título Exportar Relatório"),
     ("exp_label_nome", "exportar_164953", (525, 475, 567, 492), "exportar", "Rótulo Nome: (campo à direita)"),
     ("exp_label_tipo", "exportar_164953", (534, 500, 567, 517), "exportar", "Rótulo Tipo: (lista à direita)"),
+    ("exp_concluida", "exportacao_concluida_093252", (912, 553, 1030, 569), "exportar", "Mensagem Exportação concluída."),
+    ("exp_concluida_ok", "exportacao_concluida_093252", (967, 609, 1043, 632), "exportar", "Botão OK da mensagem Exportação concluída"),
     # E-08 barra do Terminal Server e Descarregar arquivo
     ("desc_titulo", "descarregar_170037", (424, 128, 536, 145), "descarregar", "Título Descarregar arquivo"),
     ("pasta_robo", "descarregar_170037", (560, 160, 700, 177), "pasta_robo", "Barra de endereço em Desktop > robo_linear (confirma a pasta antes de apagar/salvar/abrir)"),

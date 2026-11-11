@@ -18,7 +18,7 @@ IMAGENS_NECESSARIAS = [
     "abc_label_analitico", "abc_label_sintetico", "abc_btn_confirma", "abc_btn_sair",
     "filtros_titulo", "filtros_btn_pesquisar", "filtros_btn_posicionar",
     "filial_label_pesquisa", "filial_btn_desmarcar_todos", "filial_btn_confirmar",
-    "vis_btn_exportar", "vis_icone_impressora", "exp_titulo", "exp_label_nome", "exp_label_tipo",
+    "vis_btn_exportar", "vis_icone_impressora", "exp_titulo", "exp_concluida", "exp_concluida_ok", "exp_label_nome", "exp_label_tipo",
     "desc_titulo", "desc_label_nome", "pasta_robo",
 ]
 
@@ -154,7 +154,10 @@ def executar(t: Tela, p: Pedido) -> str:
     t.digitar(p.nome_servidor)
     t.tecla("enter")                           # Salvar
     t.esperar_sumir("exp_titulo", 20)
-    time.sleep(3)                              # "Aguarde enquanto o documento é processado"
+    # "Aguarde enquanto o documento é processado" → "Exportação concluída." → OK
+    t.esperar("exp_concluida", 60)
+    t.clicar_e_esperar("exp_concluida_ok", "vis_btn_exportar", assentar=0.5)
+    t.esperar_sumir("exp_concluida", 10)
 
     # E-08 barra do Terminal Server → descarregar → pasta do robô → Abrir
     t.passo("E-08 descarregando para o PC")
@@ -178,6 +181,9 @@ def executar(t: Tela, p: Pedido) -> str:
 
 def fechar_telas(t: Tela, espera: float = 10) -> None:
     """Fecha a visualização e a janela do relatório, voltando à tela inicial."""
+    if t.localizar("exp_concluida_ok"):             # mensagem que ficou aberta
+        t.clicar("exp_concluida_ok")
+        t.esperar_sumir("exp_concluida", espera)
     if t.localizar("vis_btn_exportar"):
         t.clicar_fixo("vis_fechar")
         t.esperar_sumir("vis_btn_exportar", espera)

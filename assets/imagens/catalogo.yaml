@@ -121,6 +121,12 @@ imagens:
     - 485
     - 120
     - 45
+  exp_concluida:
+    descricao: Mensagem Exportação concluída.
+    tela: exportar
+  exp_concluida_ok:
+    descricao: Botão OK da mensagem Exportação concluída
+    tela: exportar
   desc_titulo:
     descricao: Título Descarregar arquivo
     tela: descarregar
