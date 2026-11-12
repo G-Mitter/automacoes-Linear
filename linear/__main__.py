@@ -168,7 +168,7 @@ def cmd_run(args) -> int:
                 arquivo = rotina.executar(t, pedido, inicio)
                 baixado = downloads.esperar_novo(pasta_dl, antes, arquivo, geral["espera_download_s"])
                 final = organizador.organizar(baixado, Path(geral["pasta_base"]), perfil["processo"],
-                                              de, ate, escopo)
+                                              de, ate, escopo, lote=len(itens) > 1)
                 it["arquivos_finais"].append(str(final))
                 console.print(f"[green]✅ {escopo}[/] {final}")
             it["status"] = "ok"

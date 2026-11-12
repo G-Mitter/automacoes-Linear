@@ -23,8 +23,16 @@ def livre(destino: Path) -> Path:
     return alvo
 
 
-def organizar(arquivo: Path, pasta_base: Path, processo: str, de: date, ate: date, escopo: str) -> Path:
+def pasta_lote(processo: str, de: date, ate: date) -> str:
+    """Subpasta de uma execução com vários relatórios: <Processo>_<período>."""
+    return f"{processo}_{periodo(de, ate)}"
+
+
+def organizar(arquivo: Path, pasta_base: Path, processo: str, de: date, ate: date, escopo: str,
+              lote: bool = False) -> Path:
     pasta = pasta_base / processo
+    if lote:                                   # vários relatórios: todos juntos numa pasta do período
+        pasta = pasta / pasta_lote(processo, de, ate)
     pasta.mkdir(parents=True, exist_ok=True)
     ext = arquivo.suffix.lstrip(".").lower()
     alvo = livre(pasta / nome_final(processo, de, ate, escopo, ext))

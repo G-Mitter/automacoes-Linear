@@ -54,6 +54,7 @@ Plataforma de automações (RPA, ou seja, um "robô" que usa mouse e teclado com
   - **Escopo:** `F03` (individual), o nome do grupo (por grupo, ex.: `Seneto`) ou `Consolidado`.
   - Exemplos: `CurvaABC_2026-11-09_F03.xlsx`, `CurvaABC_2026-10-01_a_2026-10-31_Seneto.pdf`.
 - **RN-04 — Pasta:** cada processo tem sua subpasta dentro de uma pasta base configurável.
+- **RN-03b — Pasta do lote:** quando uma execução gera mais de um relatório, todos vão para `<pasta base>\<Processo>\<Processo>_<período>\` (ex.: `CurvaABC\CurvaABC_2026-11-09\`). Um relatório só fica direto em `<Processo>\`.
 - **RN-05:** se já existir um arquivo com o mesmo nome, o novo **não sobrescreve**. Ele ganha o sufixo `_2`, `_3`, etc.
 - **RN-06:** a execução começa sempre na tela inicial do SGLinear, com o usuário já logado. O robô **não digita login nem senha**.
 - **RN-07 — Retentativas:** 3 tentativas no total por filial (1 tentativa normal + 2 retentativas). Depois disso, a filial fica como **falha** e a execução segue.
