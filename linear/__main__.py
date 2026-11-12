@@ -10,7 +10,7 @@ import pyautogui
 from rich.console import Console
 from rich.table import Table
 
-from . import checagem, config, downloads, imagens
+from . import checagem, config, downloads, imagens, organizador
 
 pyautogui.FAILSAFE = True  # mouse no canto superior esquerdo = parada de emergência (RF-14)
 console = Console()
@@ -102,7 +102,7 @@ def cmd_run(args) -> int:
     if de > ate:
         erros.append("a data De é maior que a data Até")
     for item, ok, detalhe in checagem.checar():
-        if not ok and item in ("Resolução", "Escala do Windows", "Pasta Downloads"):
+        if not ok and item in ("Resolução", "Escala do Windows", "Pasta Downloads", "Pasta base"):
             erros.append(f"{item}: {detalhe}")
     if erros:
         for e in erros:
@@ -128,7 +128,9 @@ def cmd_run(args) -> int:
         try:
             arquivo = rotina.executar(t, pedido)
             baixado = downloads.esperar_novo(pasta_dl, antes, arquivo, geral["espera_download_s"])
-            console.print(f"[green]✅ F{f:02d}[/] {baixado}")
+            final = organizador.organizar(baixado, Path(geral["pasta_base"]), perfil["processo"],
+                                          de, ate, f"F{f:02d}")
+            console.print(f"[green]✅ F{f:02d}[/] {final}")
             rotina.fechar_telas(t)
         except pyautogui.FailSafeException:
             console.print("[yellow]⚠️ Parada de emergência acionada. Execução interrompida.[/]")
