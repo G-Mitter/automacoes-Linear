@@ -29,11 +29,21 @@ REGIOES = {
     "abc_btn_confirma": [1100, 770, 220, 70],
     "filial_btn_confirmar": [1000, 640, 250, 80],
     "vis_btn_exportar": [400, 80, 300, 30],
-    "exp_label_nome": [480, 460, 120, 45],
-    "exp_label_tipo": [480, 485, 120, 45],
-    "desc_label_nome": [500, 515, 120, 45],
     "vis_icone_impressora": [0, 80, 200, 30],
-    "exp_titulo": [400, 105, 400, 40],
+}
+
+# Janelas que podem abrir em outro lugar: a busca é feita perto do título da janela
+# (deslocamento x, y, largura, altura a partir do canto superior esquerdo do título).
+RELATIVOS = {
+    "exp_label_nome": ["exp_titulo", 30, 347, 120, 45],
+    "exp_label_tipo": ["exp_titulo", 30, 372, 120, 45],
+    "desc_label_nome": ["desc_titulo", 76, 387, 120, 45],
+}
+
+# Áreas onde um encontro é descartado (ex.: o botão "Exportar Relatório" da barra,
+# que tem o mesmo texto do título da janela Exportar).
+IGNORAR = {
+    "exp_titulo": [[440, 75, 170, 25]],
 }
 
 # Tipo de arquivo na janela Exportar: escolhido pelo teclado (posição na lista).
@@ -96,6 +106,10 @@ def main() -> None:
         catalogo[nome] = {"descricao": desc, "tela": tela}
         if nome in REGIOES:
             catalogo[nome]["regiao"] = REGIOES[nome]
+        if nome in RELATIVOS:
+            catalogo[nome]["relativo_a"] = RELATIVOS[nome]
+        if nome in IGNORAR:
+            catalogo[nome]["ignorar"] = IGNORAR[nome]
     texto = ("# Imagens de referência (recortes tirados em 1920x1080, escala 100%, zoom 100%)\n"
              "# Gerado por ferramentas/recortar.py\n")
     (IMAGENS / "catalogo.yaml").write_text(

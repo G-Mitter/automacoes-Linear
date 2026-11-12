@@ -1,6 +1,6 @@
 # Esquema de Backend — Automações Linear
 
-- **Versão:** 1.4
+- **Versão:** 1.5
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0, Fluxo v1.0
@@ -62,7 +62,7 @@ Cada "tabela" abaixo é um tipo de arquivo. Os campos já foram pensados para vi
 | regiao (opcional) | x,y,l,a | não | Limita a busca a uma parte da tela, para ser mais rápido e seguro |
 
 Catálogo em `assets/imagens/catalogo.yaml`, gerado por `ferramentas/recortar.py`. Ele tem três partes:
-- `imagens`: nome → descrição, tela e região de busca opcional. A região é usada quando o mesmo texto aparece em mais de um lugar, como "Nome:" ou "Relatórios".
+- `imagens`: nome → descrição, tela e região de busca opcional. A região é usada quando o mesmo texto aparece em mais de um lugar, como "Nome:" ou "Relatórios". Nas janelas que podem abrir em outro lugar (Exportar, Descarregar), `relativo_a` busca o rótulo perto do título da janela, e `ignorar` descarta encontros numa área (ex.: o botão "Exportar Relatório" da barra).
 - `posicoes_fixas`: cliques por coordenada, em 1920x1080. São usados na barra do Terminal Server, que é semitransparente e muda de aparência conforme o fundo.
 - `tipos_exportar`: a posição de cada tipo de arquivo na lista "Tipo" da janela Exportar. O tipo é escolhido pelo teclado.
 
@@ -160,6 +160,7 @@ Na interface futura, se houver mais de um usuário, entra um perfil **Visualizad
 |---|---|---|
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
+| 1.5 | 2026-11-12 | Catálogo: `relativo_a` e `ignorar` para janelas que mudam de posição |
 | 1.4 | 2026-11-10 | `opcao_relatorio` no Perfil |
 | 1.3 | 2026-11-10 | `pausa_entre_acoes_ms` em Geral |
 | 1.2 | 2026-11-10 | Catálogo de imagens com regiões, posições fixas e tipos de exportação; `pasta_servidor` em Geral |

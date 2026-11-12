@@ -100,25 +100,27 @@ imagens:
   exp_titulo:
     descricao: Título Exportar Relatório
     tela: exportar
-    regiao:
-    - 400
-    - 105
-    - 400
-    - 40
+    ignorar:
+    - - 440
+      - 75
+      - 170
+      - 25
   exp_label_nome:
     descricao: 'Rótulo Nome: (campo à direita)'
     tela: exportar
-    regiao:
-    - 480
-    - 460
+    relativo_a:
+    - exp_titulo
+    - 30
+    - 347
     - 120
     - 45
   exp_label_tipo:
     descricao: 'Rótulo Tipo: (lista à direita)'
     tela: exportar
-    regiao:
-    - 480
-    - 485
+    relativo_a:
+    - exp_titulo
+    - 30
+    - 372
     - 120
     - 45
   exp_concluida:
@@ -137,9 +139,10 @@ imagens:
   desc_label_nome:
     descricao: 'Rótulo Nome: (campo à direita)'
     tela: descarregar
-    regiao:
-    - 500
-    - 515
+    relativo_a:
+    - desc_titulo
+    - 76
+    - 387
     - 120
     - 45
   desc_btn_abrir:

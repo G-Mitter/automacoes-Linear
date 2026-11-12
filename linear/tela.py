@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pyautogui
+import pyscreeze
 
 from . import config, imagens
 
@@ -46,11 +47,21 @@ class Tela:
         if info is None:
             raise KeyError(f"imagem não cadastrada no catálogo: {nome}")
         regiao = tuple(info["regiao"]) if info.get("regiao") else None
+        if info.get("relativo_a"):                       # perto do título da janela, onde quer que ela esteja
+            ancora, rx, ry, w, h = info["relativo_a"]
+            a = self.localizar(ancora)
+            if a is None:
+                return None
+            regiao = (max(0, int(a.left) + rx), max(0, int(a.top) + ry), w, h)
+        ignorar = info.get("ignorar") or []
         try:
-            return pyautogui.locateOnScreen(str(config.PASTA_IMAGENS / f"{nome}.png"),
-                                            confidence=self.confianca, region=regiao)
-        except pyautogui.ImageNotFoundException:
-            return None
+            for b in pyautogui.locateAllOnScreen(str(config.PASTA_IMAGENS / f"{nome}.png"),
+                                                 confidence=self.confianca, region=regiao):
+                if not any(x <= b.left < x + w and y <= b.top < y + h for x, y, w, h in ignorar):
+                    return b
+        except (pyautogui.ImageNotFoundException, pyscreeze.ImageNotFoundException):
+            pass
+        return None
 
     def esperar(self, nome: str, timeout: float = 30):
         fim = time.monotonic() + timeout
