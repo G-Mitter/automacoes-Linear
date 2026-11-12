@@ -1,6 +1,6 @@
 # Plano de Implantação — Automações Linear
 
-- **Versão:** 1.7
+- **Versão:** 1.8
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD, TRD, Fluxo, Design e Backend v1.0
@@ -17,7 +17,7 @@
 |---|---|---|
 | E1 | Esqueleto do projeto + GitHub + pré-checagem | concluída |
 | E2 | Captura das imagens de referência da Curva ABC | concluída |
-| E3 | Rotina da Curva ABC para 1 filial (até baixar no PC) | em andamento |
+| E3 | Rotina da Curva ABC para 1 filial (até baixar no PC) | concluída |
 | E4 | Organizar o arquivo (nome + pasta) | pendente |
 | E5 | Várias filiais: individual, por grupo e consolidado + formato "ambos" + histórico + resumo | pendente |
 | E6 | Tratamento de erros e retentativas | pendente |
@@ -154,6 +154,7 @@
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
 | 1.1 | 2026-11-10 | E1 em andamento |
+| 1.8 | 2026-11-12 | E3 testada pelo usuário (3 execuções seguidas e parada de emergência) e concluída |
 | 1.7 | 2026-11-10 | E3 construída: `tela.py`, rotina `relatorio_padrao`, `downloads.py`, comando `run` (individual, sem retentativas, para no 1º erro) e opção `--depurar` |
 | 1.6 | 2026-11-10 | E2 testada pelo usuário e concluída. A imagem `pasta_robo` passa a ser conferida depois da navegação, e será testada na E3 |
 | 1.5 | 2026-11-10 | E2: 26 recortes validados contra os prints. Barra do Terminal Server por posição fixa; tipo de arquivo escolhido pelo teclado; nomes das telas para o `checar --tela` |
