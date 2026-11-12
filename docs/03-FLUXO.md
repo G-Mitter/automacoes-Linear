@@ -1,6 +1,6 @@
 # Fluxo — Automações Linear
 
-- **Versão:** 1.6
+- **Versão:** 1.7
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0, TRD v1.0
@@ -178,6 +178,7 @@ Só para referência e para não atrapalhar a evolução do projeto:
 ## Histórico de mudanças
 | Versão | Data | Mudança |
 |---|---|---|
+| 1.7 | 2026-11-12 | E-07/E-08: ir para a pasta do robô pela barra de endereço; janelas reconhecidas em qualquer posição |
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado (inclui as regras "modelo não encontrado = falha sem retentativa" e "SEM DADOS ≠ falha") |
 | 1.6 | 2026-11-11 | E-07: clicar OK na mensagem "Exportação concluída." antes do E-08 |

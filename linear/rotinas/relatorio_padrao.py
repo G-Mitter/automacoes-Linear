@@ -53,6 +53,24 @@ def _caminho_pasta(pasta: str) -> str:
     return f"%USERPROFILE%\\Desktop\\{pasta}"
 
 
+# Ícone de pasta no começo da barra de endereço (clicar nele deixa o endereço editável),
+# medido a partir do título da janela. A largura da janela muda, mas esse ponto não.
+BARRA_ENDERECO = {"exp_titulo": (111, 40), "desc_titulo": (112, 40)}
+
+
+def _ir_para_pasta(t: Tela, titulo: str, pasta: str) -> None:
+    """Vai para a pasta do robô pela barra de endereço, nunca pelo campo Nome:
+    um Enter no campo Nome pode salvar o arquivo com o nome da pasta."""
+    tit = t.esperar(titulo, 10)
+    dx, dy = BARRA_ENDERECO[titulo]
+    t.clicar_xy(tit.left + dx, tit.top + dy)
+    time.sleep(0.3)
+    t.tecla("ctrl", "a")
+    t.digitar(_caminho_pasta(pasta))
+    t.tecla("enter")
+    t.esperar("pasta_robo", 10)
+
+
 def executar(t: Tela, p: Pedido) -> str:
     """Faz E-01..E-08 e devolve o nome do arquivo (com extensão) que foi descarregado."""
     ext = EXTENSOES[p.formato]
@@ -134,11 +152,7 @@ def executar(t: Tela, p: Pedido) -> str:
     # ícone de exportar (ao lado da impressora): mais seguro que o botão "Exportar Relatório"
     t.esperar("vis_btn_exportar", 10)
     t.clicar_e_esperar("vis_icone_impressora", "exp_titulo", assentar=1.5, dx=-28)
-    t.clicar("exp_label_nome", dx=100, a_partir="direita")
-    t.tecla("ctrl", "a")
-    t.digitar(_caminho_pasta(p.pasta_servidor))
-    t.tecla("enter")
-    t.esperar("pasta_robo", 10)               # só apaga com a pasta do robô confirmada
+    _ir_para_pasta(t, "exp_titulo", p.pasta_servidor)       # só apaga com a pasta do robô confirmada
     tit = t.esperar("exp_titulo", 5)
     t.clicar_xy(tit.left + tit.width // 2 + 339, tit.top + tit.height // 2 + 229)  # lista de arquivos
     t.tecla("ctrl", "a")
@@ -165,11 +179,7 @@ def executar(t: Tela, p: Pedido) -> str:
     time.sleep(1.2)
     t.clicar_fixo("ts_icone_descarregar")
     t.esperar("desc_titulo", 15)
-    t.clicar("desc_label_nome", dx=100, a_partir="direita")
-    t.tecla("ctrl", "a")
-    t.digitar(_caminho_pasta(p.pasta_servidor))
-    t.tecla("enter")
-    t.esperar("pasta_robo", 10)
+    _ir_para_pasta(t, "desc_titulo", p.pasta_servidor)
     arquivo = f"{p.nome_servidor}.{ext}"
     t.clicar("desc_label_nome", dx=100, a_partir="direita")
     t.tecla("ctrl", "a")
