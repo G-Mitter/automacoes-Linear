@@ -87,7 +87,7 @@ def cmd_run(args) -> int:
     Se um item falhar, fecha as telas e segue para o próximo (retentativas chegam na E6).
     """
     from .rotinas import relatorio_padrao as rotina
-    from .tela import ErroConfiguracao, Tela, TelaErro
+    from .tela import ErroConfiguracao, SemDados, Tela, TelaErro
 
     geral = config.carregar_geral()
     perfis = config.carregar_perfis()
@@ -177,6 +177,12 @@ def cmd_run(args) -> int:
                 na_tela_relatorio = True
             else:
                 rotina.fechar_telas(t)
+        except SemDados:
+            it["status"] = "sem_dados"
+            console.print(f"[yellow]⏭ {escopo}[/] sem informações no período, pulando")
+            na_tela_relatorio = True               # a tela do relatório continua aberta
+            if n == len(itens):
+                rotina.fechar_telas(t)
         except pyautogui.FailSafeException:
             it["status"] = "falha"
             exe.update(status="abortada", motivo_aborto="parada de emergência")
@@ -202,7 +208,7 @@ def cmd_run(args) -> int:
             it["fim"] = datetime.now().isoformat(timespec="seconds")
             _salvar_execucao(exe)
 
-    ok = sum(i["status"] == "ok" for i in exe["itens"])
+    ok = sum(i["status"] in ("ok", "sem_dados") for i in exe["itens"])
     if exe["status"] == "em_andamento":
         exe["status"] = "concluida" if ok == len(itens) else "concluida_com_falhas"
     exe["fim"] = datetime.now().isoformat(timespec="seconds")
@@ -213,7 +219,7 @@ def cmd_run(args) -> int:
         tab.add_column(col)
     for i in exe["itens"]:
         det = "\n".join(Path(a).name for a in i["arquivos_finais"]) or (i["erros"][-1]["mensagem"] if i["erros"] else "")
-        tab.add_row(i["escopo"], "[green]✅ ok[/]" if i["status"] == "ok" else "[red]❌ falha[/]", det)
+        tab.add_row(i["escopo"], {"ok": "[green]✅ ok[/]", "sem_dados": "[yellow]⏭ sem dados[/]"}.get(i["status"], "[red]❌ falha[/]"), det)
     for esc, _ in itens[len(exe["itens"]):]:
         tab.add_row(esc, "[yellow]⏸ não rodou[/]", "")
     console.print(tab)

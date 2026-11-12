@@ -40,6 +40,9 @@ RELATIVOS = {
     "desc_label_nome": ["desc_titulo", 76, 387, 120, 45],
 }
 
+# Confiança própria (recortes tirados de print redimensionado ficam menos nítidos)
+CONFIANCA = {"sem_dados_msg": 0.7}
+
 # Áreas onde um encontro é descartado (ex.: o botão "Exportar Relatório" da barra,
 # que tem o mesmo texto do título da janela Exportar).
 IGNORAR = {
@@ -86,6 +89,7 @@ RECORTES = [
     ("exp_concluida_ok", "exportacao_concluida_093252", (967, 609, 1043, 632), "exportar", "Botão OK da mensagem Exportação concluída"),
     # E-08 barra do Terminal Server e Descarregar arquivo
     ("desc_titulo", "descarregar_170037", (424, 128, 536, 145), "descarregar", "Título Descarregar arquivo"),
+    ("sem_dados_msg", "sem_dados_print_usuario", (778, 516, 1145, 532), "sem_dados", "Mensagem: Não foram encontradas informações para a opção de filtro informada"),
     ("pasta_robo", "exportar_shell_162014", (588, 146, 652, 161), "pasta_robo", "Texto robo_linear na barra de endereço/busca (confirma a pasta antes de apagar/salvar/abrir)"),
     ("desc_label_nome", "descarregar_170037", (546, 529, 589, 546), "descarregar", "Rótulo Nome: (campo à direita)"),
     ("desc_btn_abrir", "descarregar_170037", (881, 556, 969, 581), "descarregar", "Botão Abrir"),
@@ -110,6 +114,8 @@ def main() -> None:
             catalogo[nome]["relativo_a"] = RELATIVOS[nome]
         if nome in IGNORAR:
             catalogo[nome]["ignorar"] = IGNORAR[nome]
+        if nome in CONFIANCA:
+            catalogo[nome]["confianca"] = CONFIANCA[nome]
     texto = ("# Imagens de referência (recortes tirados em 1920x1080, escala 100%, zoom 100%)\n"
              "# Gerado por ferramentas/recortar.py\n")
     (IMAGENS / "catalogo.yaml").write_text(

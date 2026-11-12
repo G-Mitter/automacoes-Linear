@@ -132,6 +132,11 @@ imagens:
   desc_titulo:
     descricao: Título Descarregar arquivo
     tela: descarregar
+  sem_dados_msg:
+    descricao: 'Mensagem: Não foram encontradas informações para a opção de filtro
+      informada'
+    tela: sem_dados
+    confianca: 0.7
   pasta_robo:
     descricao: Texto robo_linear na barra de endereço/busca (confirma a pasta antes
       de apagar/salvar/abrir)

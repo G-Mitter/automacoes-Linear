@@ -23,6 +23,10 @@ class TelaErro(Exception):
     """Algo não apareceu/sumiu a tempo. A tentativa pode ser repetida."""
 
 
+class SemDados(Exception):
+    """O ERP avisou que não há informações para o filtro. Não é erro: pula o relatório."""
+
+
 class ErroConfiguracao(TelaErro):
     """Erro de configuração (ex.: modelo de filtro não existe). Não adianta repetir."""
 
@@ -56,7 +60,7 @@ class Tela:
         ignorar = info.get("ignorar") or []
         try:
             for b in pyautogui.locateAllOnScreen(str(config.PASTA_IMAGENS / f"{nome}.png"),
-                                                 confidence=self.confianca, region=regiao):
+                                                 confidence=info.get("confianca", self.confianca), region=regiao):
                 if not any(x <= b.left < x + w and y <= b.top < y + h for x, y, w, h in ignorar):
                     return b
         except (pyautogui.ImageNotFoundException, pyscreeze.ImageNotFoundException):

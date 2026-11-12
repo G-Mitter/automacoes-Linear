@@ -10,7 +10,7 @@ import time
 from dataclasses import dataclass
 from datetime import date
 
-from ..tela import ErroConfiguracao, Tela, TelaErro
+from ..tela import ErroConfiguracao, SemDados, Tela, TelaErro
 
 IMAGENS_NECESSARIAS = [
     "inicio_icones", "menu_relatorios", "menu_relatorios_gerenciais", "menu_curva_abc",
@@ -19,7 +19,7 @@ IMAGENS_NECESSARIAS = [
     "filtros_titulo", "filtros_btn_pesquisar", "filtros_btn_posicionar",
     "filial_label_pesquisa", "filial_btn_desmarcar_todos", "filial_btn_confirmar",
     "vis_btn_exportar", "vis_icone_impressora", "exp_titulo", "exp_concluida", "exp_concluida_ok", "exp_label_nome", "exp_label_tipo",
-    "desc_titulo", "desc_label_nome", "pasta_robo",
+    "desc_titulo", "desc_label_nome", "pasta_robo", "sem_dados_msg",
 ]
 
 EXTENSOES = {"pdf": "pdf", "xlsx": "xlsx"}
@@ -162,8 +162,16 @@ def executar(t: Tela, p: Pedido, a_partir: str = "E-01") -> str:
     if faz("E-05"):
         # E-05 Confirma → espera a visualização
         t.passo("E-05 gerando o relatório")
-        t.clicar_e_esperar("abc_btn_confirma", "vis_btn_exportar", tentativas=1,
-                           espera_cada=p.espera_relatorio)
+        t.clicar("abc_btn_confirma")
+        fim = time.monotonic() + p.espera_relatorio
+        while not t.localizar("vis_btn_exportar"):
+            if t.localizar("sem_dados_msg"):       # "Não foram encontradas informações..." → OK e pula
+                t.tecla("enter")
+                t.esperar_sumir("sem_dados_msg", 10)
+                raise SemDados("sem informações para o filtro")
+            if time.monotonic() > fim:
+                raise TelaErro(f"o relatório não abriu em {p.espera_relatorio:.0f}s")
+            time.sleep(0.5)
 
     if faz("E-07"):
         # E-06/E-07 Exportar → pasta do robô → apaga → tipo → nome → Salvar
