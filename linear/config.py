@@ -53,6 +53,39 @@ def resolver_filiais(valor, geral: dict) -> list[int]:
     return filiais
 
 
+def montar_itens(valor, geral: dict, modo: str) -> list[tuple[str, list[int]]]:
+    """Divide o pedido em relatórios: [(escopo, filiais)].
+
+    individual → um por filial (F03...); consolidado → um só com todas;
+    por_grupo → um por grupo citado ('todas' = todos os grupos); números soltos saem individuais.
+    """
+    filiais = resolver_filiais(valor, geral)
+    if modo == "individual":
+        return [(f"F{f:02d}", [f]) for f in filiais]
+    if modo == "consolidado":
+        return [("Consolidado", filiais)]
+    grupos = {n.lower(): (n, fs) for n, fs in (geral.get("grupos") or {}).items()}
+    if valor in (None, "todas"):
+        valor = ["todas"]
+    elif isinstance(valor, str):
+        valor = [x.strip() for x in valor.split(",") if x.strip()]
+    itens: list[tuple[str, list[int]]] = []
+    for item in valor:
+        texto = str(item).strip().lower()
+        if texto == "todas":
+            itens += [(n, list(fs)) for n, fs in grupos.values()]
+        elif texto in grupos:
+            itens.append((grupos[texto][0], list(grupos[texto][1])))
+        else:
+            itens.append((f"F{int(texto):02d}", [int(texto)]))
+    vistos, unicos = set(), []
+    for esc, fs in itens:
+        if esc not in vistos:
+            vistos.add(esc)
+            unicos.append((esc, fs))
+    return unicos
+
+
 def validar_geral(geral: dict) -> list[str]:
     """Cada filial de grupo precisa estar em filiais_ativas."""
     ativas = set(geral["filiais_ativas"])
