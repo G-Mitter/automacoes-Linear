@@ -133,7 +133,7 @@ imagens:
     descricao: Título Descarregar arquivo
     tela: descarregar
   pasta_robo:
-    descricao: Barra de endereço em Desktop > robo_linear (confirma a pasta antes
+    descricao: Texto robo_linear na barra de endereço/busca (confirma a pasta antes
       de apagar/salvar/abrir)
     tela: pasta_robo
   desc_label_nome:
