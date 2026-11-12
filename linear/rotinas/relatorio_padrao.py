@@ -50,7 +50,7 @@ def _data(d: date) -> str:
 
 
 def _caminho_pasta(pasta: str) -> str:
-    return f"%USERPROFILE%\\Desktop\\{pasta}"
+    return f"shell:Desktop\\{pasta}"   # área de trabalho real, mesmo redirecionada
 
 
 # Ícone de pasta no começo da barra de endereço (clicar nele deixa o endereço editável),
