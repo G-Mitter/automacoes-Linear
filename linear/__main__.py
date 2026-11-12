@@ -104,6 +104,12 @@ def cmd_run(args) -> int:
     for item, ok, detalhe in checagem.checar():
         if not ok and item in ("Resolução", "Escala do Windows", "Pasta Downloads", "Pasta base"):
             erros.append(f"{item}: {detalhe}")
+    if args.a_partir not in rotina.ETAPAS:
+        erros.append(f"--a-partir precisa ser uma de: {', '.join(rotina.ETAPAS)}")
+    if args.a_partir == "E-08" and not args.nome:
+        erros.append("--a-partir E-08 precisa do --nome do arquivo já exportado no servidor (sem extensão)")
+    if args.a_partir != "E-01" and len(filiais) > 1:
+        erros.append("--a-partir só funciona com uma filial")
     if erros:
         for e in erros:
             console.print(f"[red]❌ {e}[/]")
@@ -121,12 +127,12 @@ def cmd_run(args) -> int:
         console.print(f"[blue]⏳ F{f:02d}[/]")
         pedido = rotina.Pedido(
             menu=perfil["menu"], modelo_filtro=perfil["modelo_filtro"], filiais=[f], de=de, ate=ate,
-            formato=formato, nome_servidor=f"{perfil['processo']}_F{f:02d}_{datetime.now():%H%M%S}",
+            formato=formato, nome_servidor=args.nome or f"{perfil['processo']}_F{f:02d}_{datetime.now():%H%M%S}",
             pasta_servidor=geral["pasta_servidor"], espera=geral["espera_padrao_s"],
             opcao_relatorio=perfil.get("opcao_relatorio", "analitico"))
         antes = downloads.fotografar(pasta_dl)
         try:
-            arquivo = rotina.executar(t, pedido)
+            arquivo = rotina.executar(t, pedido, args.a_partir)
             baixado = downloads.esperar_novo(pasta_dl, antes, arquivo, geral["espera_download_s"])
             final = organizador.organizar(baixado, Path(geral["pasta_base"]), perfil["processo"],
                                           de, ate, f"F{f:02d}")
@@ -163,6 +169,9 @@ def main(argv=None) -> int:
     p.add_argument("--de", type=_data, help="data inicial AAAA-MM-DD (padrão: ontem)")
     p.add_argument("--ate", type=_data, help="data final AAAA-MM-DD (padrão: igual ao --de)")
     p.add_argument("--formato", choices=["pdf", "xlsx", "ambos"])
+    p.add_argument("--a-partir", default="E-01", metavar="ETAPA",
+                   help="começa nesta etapa (E-03b, E-04, E-05, E-07, E-08...); deixe a tela no ponto certo antes")
+    p.add_argument("--nome", help="nome do arquivo no servidor, sem extensão (obrigatório com --a-partir E-08)")
     p.add_argument("--depurar", action="store_true", help="tira um print a cada passo (logs/prints)")
     p.set_defaults(func=cmd_run)
     args = parser.parse_args(argv)

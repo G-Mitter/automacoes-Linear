@@ -26,3 +26,11 @@ cd C:\repositorios\automacaoLinear
 
 ## Requisitos de tela
 Resolução 1920x1080, escala do Windows 100%, zoom do Chrome 100%.
+
+## Testar a partir de uma etapa
+Deixe o ERP na tela certa e rode, por exemplo, com a visualização do relatório aberta:
+
+    .\linear run curva_abc --filiais 3 --de 2026-11-09 --formato xlsx --a-partir E-07
+
+Para só descarregar um arquivo já exportado: `--a-partir E-08 --nome CurvaABC_F03_151755`.
+Etapas: E-01, E-02, E-03, E-03b, E-04, E-04b, E-05, E-07, E-08 (ver docs/03-FLUXO.md).
