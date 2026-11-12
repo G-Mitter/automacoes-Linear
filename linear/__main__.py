@@ -142,6 +142,7 @@ def cmd_run(args) -> int:
            "status": "em_andamento", "motivo_aborto": None, "arquivo_log": None, "itens": []}
     _salvar_execucao(exe)
 
+    na_tela_relatorio = False   # entre uma filial e outra só fecha a visualização e recomeça no filtro
     for n, (escopo, filiais) in enumerate(itens, 1):
         console.print(f"[blue]⏳ {n}/{len(itens)} {escopo}[/] filiais {filiais}")
         it = {"escopo": escopo, "filiais": filiais, "status": "pendente", "tentativas": 1,
@@ -158,14 +159,24 @@ def cmd_run(args) -> int:
                     opcao_relatorio=perfil.get("opcao_relatorio", "analitico"))
                 antes = downloads.fotografar(pasta_dl)
                 # no 2º formato a visualização continua aberta: começa direto no Exportar
-                arquivo = rotina.executar(t, pedido, args.a_partir if k == 0 else "E-07")
+                if k > 0:
+                    inicio = "E-07"
+                elif na_tela_relatorio:
+                    inicio = "E-03"
+                else:
+                    inicio = args.a_partir
+                arquivo = rotina.executar(t, pedido, inicio)
                 baixado = downloads.esperar_novo(pasta_dl, antes, arquivo, geral["espera_download_s"])
                 final = organizador.organizar(baixado, Path(geral["pasta_base"]), perfil["processo"],
                                               de, ate, escopo)
                 it["arquivos_finais"].append(str(final))
                 console.print(f"[green]✅ {escopo}[/] {final}")
             it["status"] = "ok"
-            rotina.fechar_telas(t)
+            if n < len(itens):
+                rotina.fechar_visualizacao(t)
+                na_tela_relatorio = True
+            else:
+                rotina.fechar_telas(t)
         except pyautogui.FailSafeException:
             it["status"] = "falha"
             exe.update(status="abortada", motivo_aborto="parada de emergência")
@@ -180,7 +191,8 @@ def cmd_run(args) -> int:
             if isinstance(e, ErroConfiguracao):
                 exe.update(status="abortada", motivo_aborto=str(e))
                 break
-            try:                                   # volta à tela inicial e segue para o próximo
+            try:                                   # no erro volta à tela inicial e recomeça do menu
+                na_tela_relatorio = False
                 rotina.fechar_telas(t)
             except (TelaErro, TimeoutError):
                 exe.update(status="abortada", motivo_aborto=f"não voltou à tela inicial depois de {escopo}")

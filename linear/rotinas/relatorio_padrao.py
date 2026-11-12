@@ -208,6 +208,17 @@ def executar(t: Tela, p: Pedido, a_partir: str = "E-01") -> str:
     return arquivo
 
 
+def fechar_visualizacao(t: Tela, espera: float = 10) -> None:
+    """Fecha só a visualização e fica na tela do relatório, pronta para a próxima filial."""
+    if t.localizar("exp_concluida_ok"):
+        t.clicar("exp_concluida_ok")
+        t.esperar_sumir("exp_concluida", espera)
+    if t.localizar("vis_btn_exportar"):
+        t.clicar_fixo("vis_fechar")
+        t.esperar_sumir("vis_btn_exportar", espera)
+    t.esperar("abc_titulo", espera)
+
+
 def fechar_telas(t: Tela, espera: float = 10) -> None:
     """Fecha a visualização e a janela do relatório, voltando à tela inicial."""
     if t.localizar("exp_concluida_ok"):             # mensagem que ficou aberta
