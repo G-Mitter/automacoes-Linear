@@ -1,5 +1,6 @@
 # Curva ABC / Contribuição Marginal de Venda
 nome: Curva ABC
+categoria: Relatórios   # agrupamento no painel (RF-16)
 processo: CurvaABC
 rotina: relatorio_padrao
 # Relatórios → Relatórios Gerenciais → Curva ABC / Contribuição Marginal de Venda

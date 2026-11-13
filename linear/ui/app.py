@@ -45,7 +45,7 @@ class Bolinha(QWidget):
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setFixedSize(DIAMETRO, DIAMETRO)
         tela = QGuiApplication.primaryScreen().availableGeometry()
-        self.move(tela.right() - DIAMETRO - MARGEM, tela.top() + MARGEM)
+        self.move(tela.right() - DIAMETRO - MARGEM, tela.bottom() - DIAMETRO - MARGEM)
         self._cor_atual = "#57606a"
 
     def pintar(self, cor: str) -> None:
@@ -83,8 +83,8 @@ class App:
                                      if motivo == QSystemTrayIcon.ActivationReason.Trigger else None)
         self.tray.show()
 
-        self._ultimo_status_terminado: str | None = None
-        self._escondendo_em: int | None = None
+        self._escondendo_em: float | None = None
+        self._avisado_erro: set[str] = set()
         self.relogio = QTimer()
         self.relogio.setInterval(1500)
         self.relogio.timeout.connect(self._tick)
@@ -111,6 +111,9 @@ class App:
             self.bolinha.hide()
             return
         status = exe.get("status")
+        if any(it.get("status") == "falha" for it in exe.get("itens", [])) and exe["id"] not in self._avisado_erro:
+            self._avisado_erro.add(exe["id"])
+            self.painel.abrir_na_aba_erros()
         if status == "em_andamento":
             self.bolinha.pintar(CORES_STATUS["em_andamento"])
             self.bolinha.show()
