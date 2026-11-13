@@ -9,11 +9,12 @@ import os
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QPoint, Qt, QTimer
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QAction, QColor, QGuiApplication, QIcon, QPainter, QPixmap
 from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon, QWidget
 
-from .. import historico
+from .. import config, historico
+from .janelas import focar_janela
 from .painel import CORES_STATUS, Painel
 
 RAIZ = Path(__file__).resolve().parent.parent.parent
@@ -69,6 +70,7 @@ class App:
         self.app = QApplication(sys.argv)
         self.app.setQuitOnLastWindowClosed(False)
 
+        self._geral = config.carregar_geral()
         self.painel = Painel(on_iniciar=self._iniciar_execucao)
         self.bolinha = Bolinha(ao_clicar=self._abrir_painel)
 
@@ -102,6 +104,10 @@ class App:
         ambiente = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
         subprocess.Popen([sys.executable, "-m", "linear", *argv], cwd=str(RAIZ), env=ambiente,
                           creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0)
+        # some sozinho e devolve a tela pro ERP: o usuário não precisa clicar em nada
+        self.painel.hide()
+        janela_erp = self._geral.get("janela_erp", "Portal Linear")
+        QTimer.singleShot(400, lambda: focar_janela(janela_erp))
 
     def _tick(self) -> None:
         exe = historico.ultima()
@@ -128,6 +134,8 @@ class App:
                 self._escondendo_em -= self.relogio.interval() / 1000
                 if self._escondendo_em <= 0:
                     self.bolinha.hide()
+        if self.bolinha.isVisible():   # outras janelas (ex.: o ERP ganhando foco) podem passar à frente
+            self.bolinha.raise_()
 
     def executar(self) -> int:
         return self.app.exec()
