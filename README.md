@@ -34,3 +34,10 @@ Deixe o ERP na tela certa e rode, por exemplo, com a visualização do relatóri
 
 Para só descarregar um arquivo já exportado: `--a-partir E-08 --nome CurvaABC_F03_151755`.
 Etapas: E-01, E-02, E-03, E-03b, E-04, E-04b, E-05, E-07, E-08 (ver docs/03-FLUXO.md).
+
+## App (bandeja + bolinha + painel)
+Abra com `linear_ui.cmd` (sem janela de terminal) ou `.\linear ui`. Fica na bandeja do Windows;
+uma bolinha aparece no canto superior direito, por cima de qualquer janela, enquanto uma automação
+roda (azul = rodando, verde = concluída, vermelha = com falha). Clicar na bolinha ou no ícone da
+bandeja abre o painel: escolher e iniciar um perfil, acompanhar a execução atual e ver a lista de
+erros (lendo `execucoes/*.json`, sem precisar do terminal).

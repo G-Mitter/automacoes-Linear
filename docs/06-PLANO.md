@@ -1,6 +1,6 @@
 # Plano de Implantação — Automações Linear
 
-- **Versão:** 1.11
+- **Versão:** 1.12
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD, TRD, Fluxo, Design e Backend v1.0
@@ -142,15 +142,35 @@
 
 ---
 
+## UI1 — Bolinha flutuante, bandeja e painel (iniciar + acompanhar + erros)
+- **Objetivo:** o usuário deixa de precisar do terminal. Um app sempre ligado, com ícone na bandeja do Windows; uma bolinha flutua no canto superior direito **sobre qualquer janela** enquanto uma automação roda, e muda de cor conforme o status. Clicar na bolinha (ou no ícone da bandeja) abre um painel para escolher e iniciar um perfil, ver o progresso da execução atual e listar os erros que apareceram (Design §9b).
+- **O que será construído:** `linear/ui/app.py` (PySide6: ícone de bandeja + bolinha sem moldura, sempre no topo, translúcida) e `linear/ui/painel.py` (lista de perfis com botão Iniciar, que chama o mesmo `python -m linear run` como subprocesso; tabela de progresso e lista de erros lendo `execucoes/*.json`, sem precisar mudar o robô). Atalho `linear_ui.cmd` para abrir.
+- **RF/T/dados:** RF-16; TRD §1 (PySide6); Design §9b; Execucao/ItemExecucao (leitura, sem mudança de formato).
+- **Como testar:**
+  1. Abrir `linear_ui.cmd`: aparece o ícone na bandeja, sem bolinha (nada rodando).
+  2. Pelo painel, escolher "Curva ABC", filiais `3,4`, Iniciar: a bolinha aparece no canto superior direito, por cima do Chrome/ERP, e muda de cor ao terminar.
+  3. Clicar na bolinha durante a execução: o painel mostra a filial atual e o progresso.
+  4. Forçar uma falha (ex.: filial inexistente): o painel lista o erro com filial, hora e o caminho do print.
+- **Pronto quando:** os 4 testes passarem e o app sobreviver a iniciar e cancelar duas execuções seguidas sem travar.
+- **Risco:** médio. É a primeira peça gráfica do projeto; pode exigir mais um ciclo de ajuste visual depois do primeiro teste.
+
+## UI2 — Agendamento e automações futuras no painel
+- **Objetivo:** o painel vira o único lugar para cadastrar e agendar as automações que forem chegando, não só a Curva ABC.
+- **O que será construído:** decidido quando houver uma 2ª rotina pronta para entrar no painel.
+- **Risco:** baixo.
+
+---
+
 ## Depois da V1 (fora deste plano)
 - Novos perfis e relatórios: cada um é um perfil novo ou uma rotina nova, mais a captura de imagens (repete E2 a E3 de forma reduzida).
-- Interface visual (RF-16): será planejada como um novo bloco de etapas, com atualização do PRD.
+- Interface visual (RF-16): UI1 e UI2 acima cobrem a 1ª versão (bolinha + painel). Passos seguintes entram aqui conforme surgirem.
 
 ---
 
 ## Histórico de mudanças
 | Versão | Data | Mudança |
 |---|---|---|
+| 1.12 | 2026-11-13 | Novo bloco UI1/UI2: interface visual (RF-16) com bolinha flutuante, bandeja e painel |
 | 1.11 | 2026-11-13 | E5 confirmada no ERP (até 7 filiais seguidas, com pausa externa registrada). E6 em andamento: até 3 tentativas por filial, fecha e reabre as telas entre elas, descarta arquivo parcial de tentativa que falhou; a cada tentativa grava tipo, mensagem e print em `ItemExecucao.erros` |
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |

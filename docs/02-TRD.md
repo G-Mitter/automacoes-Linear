@@ -1,6 +1,6 @@
 # TRD — Automações Linear (requisitos técnicos)
 
-- **Versão:** 1.1
+- **Versão:** 1.2
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD v1.0
@@ -20,7 +20,7 @@
 | Logs | Módulo `logging` do Python + **print da tela** em cada erro | Nativo e sem dependência | — |
 | Aviso | **Bot do Telegram** pela API HTTP (`requests`) | Pedido do usuário; uma chamada HTTP simples | Biblioteca python-telegram-bot: pesada para só enviar mensagens |
 | Execução | Linha de comando: `python -m linear run <perfil> --filiais 3,4 --modo individual` | Rápido de construir e testar; a interface futura vai chamar o mesmo comando | — |
-| Interface futura (RF-16) | **Decidir depois dos testes**. Candidatos: Streamlit (painel web local, simples) ou app web com FastAPI | Fora do escopo da V1 | — |
+| Interface (RF-16) | **PySide6** (Qt para Python) | Precisa de uma bolinha sem moldura, translúcida, sempre no topo de **qualquer** janela (inclusive o Chrome do Terminal Server) — um app web (Streamlit/FastAPI) só aparece dentro de uma aba de navegador e não consegue flutuar sobre outras janelas | Streamlit/FastAPI: ótimos para painel, mas não flutuam sobre o SO; tkinter: dá para fazer, mas o suporte a transparência e ícone de bandeja é mais frágil no Windows |
 | Versionamento/backup | **Git + GitHub** — `G-Mitter/automacoes-Linear` (público) | Pedido do usuário | — |
 
 ## 2. Como as peças se conectam
@@ -133,6 +133,7 @@ automacaoLinear/
 ## Histórico de mudanças
 | Versão | Data | Mudança |
 |---|---|---|
+| 1.2 | 2026-11-13 | Interface (RF-16) decidida: PySide6, por precisar flutuar sobre qualquer janela |
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado; resolução 1920x1080 registrada |
 | 1.1 | 2026-11-10 | Execução pelo atalho `linear.cmd` (o PowerShell bloqueia o `activate`); `rich` adicionado às dependências |

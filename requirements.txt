@@ -4,3 +4,4 @@ pyyaml==6.0.2
 requests==2.32.3
 rich==13.9.4
 pillow==13.0.0
+PySide6==6.12.0

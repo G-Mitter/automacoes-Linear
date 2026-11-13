@@ -71,6 +71,11 @@ def cmd_capturar(args) -> int:
     return 0
 
 
+def cmd_ui(_args) -> int:
+    from .ui.app import main as ui_main
+    return ui_main()
+
+
 def _data(texto: str) -> date:
     return datetime.strptime(texto, "%Y-%m-%d").date()
 
@@ -256,6 +261,7 @@ def main(argv=None) -> int:
     p.add_argument("nome", help="nome do print, ex.: tela_inicial")
     p.add_argument("--atraso", type=int, default=8, help="segundos antes do print (padrão 8)")
     p.set_defaults(func=cmd_capturar)
+    sub.add_parser("ui", help="abre o app (bandeja + bolinha + painel)").set_defaults(func=cmd_ui)
     p = sub.add_parser("run", help="executa um perfil")
     p.add_argument("perfil")
     p.add_argument("--filiais", help="ex.: 3,4,6 ou seneto,60 ou todas")
