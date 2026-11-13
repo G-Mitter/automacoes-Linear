@@ -14,8 +14,9 @@ from PySide6.QtGui import QAction, QColor, QGuiApplication, QIcon, QPainter, QPi
 from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon, QWidget
 
 from .. import config, historico
+from .estilo import CORES_STATUS, QSS
 from .janelas import focar_janela
-from .painel import CORES_STATUS, Painel
+from .painel import Painel
 
 RAIZ = Path(__file__).resolve().parent.parent.parent
 DIAMETRO = 48
@@ -47,19 +48,29 @@ class Bolinha(QWidget):
         self.setFixedSize(DIAMETRO, DIAMETRO)
         tela = QGuiApplication.primaryScreen().availableGeometry()
         self.move(tela.right() - DIAMETRO - MARGEM, tela.bottom() - DIAMETRO - MARGEM)
-        self._cor_atual = "#57606a"
+        self._cor_atual = CORES_STATUS["pendente"]
+        self.setToolTip("Automações Linear — clique para abrir o painel")
 
     def pintar(self, cor: str) -> None:
         self._cor_atual = cor
-        self.setPixmap_ = None  # placeholder, sem uso
         self.update()
 
     def paintEvent(self, _evento) -> None:  # noqa: N802 (nome do Qt)
+        from PySide6.QtGui import QRadialGradient
+
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
-        p.setBrush(QColor(self._cor_atual))
-        p.setPen(QColor("#ffffff"))
-        p.drawEllipse(1, 1, DIAMETRO - 3, DIAMETRO - 3)
+        # sombra própria (em vez de QGraphicsDropShadowEffect, que trava a janela translúcida no Windows)
+        for raio, alfa in ((DIAMETRO - 1, 20), (DIAMETRO - 4, 35), (DIAMETRO - 7, 55)):
+            p.setBrush(QColor(0, 0, 0, alfa))
+            p.setPen(Qt.PenStyle.NoPen)
+            p.drawEllipse(self.rect().center(), raio // 2, raio // 2)
+        gradiente = QRadialGradient(DIAMETRO / 2, DIAMETRO / 2.6, DIAMETRO / 1.3)
+        gradiente.setColorAt(0, QColor(self._cor_atual).lighter(135))
+        gradiente.setColorAt(1, QColor(self._cor_atual))
+        p.setBrush(gradiente)
+        p.setPen(QColor(255, 255, 255, 220))
+        p.drawEllipse(3, 1, DIAMETRO - 7, DIAMETRO - 7)
 
     def mousePressEvent(self, _evento) -> None:  # noqa: N802
         self.ao_clicar()
@@ -69,12 +80,13 @@ class App:
     def __init__(self) -> None:
         self.app = QApplication(sys.argv)
         self.app.setQuitOnLastWindowClosed(False)
+        self.app.setStyleSheet(QSS)
 
         self._geral = config.carregar_geral()
         self.painel = Painel(on_iniciar=self._iniciar_execucao)
         self.bolinha = Bolinha(ao_clicar=self._abrir_painel)
 
-        self.tray = QSystemTrayIcon(QIcon(_bolinha("#57606a", 22)))
+        self.tray = QSystemTrayIcon(QIcon(_bolinha(CORES_STATUS["pendente"], 22)))
         self.tray.setToolTip("Automações Linear")
         menu = QMenu()
         acao_abrir = QAction("Abrir painel"); acao_abrir.triggered.connect(self._abrir_painel)

@@ -11,11 +11,8 @@ from PySide6.QtWidgets import (QComboBox, QDateEdit, QHBoxLayout, QLabel, QLineE
                                 QVBoxLayout, QWidget)
 
 from .. import config, historico
+from .estilo import ROTULO_STATUS
 
-CORES_STATUS = {
-    "ok": "#1a7f37", "sem_dados": "#9a6700", "falha": "#cf222e",
-    "pendente": "#57606a", "em_andamento": "#0969da", None: "#57606a",
-}
 ABA_AUTOMACOES, ABA_EXECUCAO, ABA_ERROS = range(3)
 
 
@@ -26,7 +23,8 @@ class _FormularioPerfil(QWidget):
         super().__init__()
         self.pid, self.on_iniciar = pid, on_iniciar
         l = QVBoxLayout(self)
-        l.addWidget(QLabel(f"<b>{perfil.get('nome', pid)}</b>"))
+        titulo = QLabel(perfil.get("nome", pid)); titulo.setProperty("papel", "titulo")
+        l.addWidget(titulo)
 
         linha2 = QHBoxLayout()
         self.ed_filiais = QLineEdit(str(perfil.get("filiais_padrao", "todas")))
@@ -170,7 +168,8 @@ class Painel(QWidget):
             self.tab_itens.setRowCount(len(itens))
             for r, it in enumerate(itens):
                 self.tab_itens.setItem(r, 0, QTableWidgetItem(it["escopo"]))
-                self.tab_itens.setItem(r, 1, QTableWidgetItem(it["status"]))
+                self.tab_itens.setItem(r, 1, QTableWidgetItem(
+                    ROTULO_STATUS.get(it["status"], it["status"])))
                 self.tab_itens.setItem(r, 2, QTableWidgetItem(str(it.get("tentativas", 1))))
                 self.tab_itens.setItem(r, 3, QTableWidgetItem(
                     ", ".join(Path(a).name for a in it.get("arquivos_finais", []))))

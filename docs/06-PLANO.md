@@ -1,6 +1,6 @@
 # Plano de Implantação — Automações Linear
 
-- **Versão:** 1.14
+- **Versão:** 1.15
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD, TRD, Fluxo, Design e Backend v1.0
@@ -170,6 +170,7 @@
 ## Histórico de mudanças
 | Versão | Data | Mudança |
 |---|---|---|
+| 1.15 | 2026-11-13 | UI1: visual no padrão do Design (§2/§6/§7) — tema escuro, cores da paleta, bolinha com gradiente e sombra própria, status sempre com ícone+texto (`estilo.py`) |
 | 1.14 | 2026-11-13 | UI1: ao Iniciar, o painel se esconde e o ERP volta à frente sozinho (`janelas.py`, `Geral.janela_erp`); a bolinha se traz de volta ao topo a cada ciclo |
 | 1.13 | 2026-11-13 | UI1 ajustada: bolinha no canto inferior direito; aba Automações virou árvore Categoria > Perfil (ex.: Relatórios > Curva ABC), cada um com seu formulário; o painel abre sozinho na aba Erros assim que uma filial falha |
 | 1.12 | 2026-11-13 | Novo bloco UI1/UI2: interface visual (RF-16) com bolinha flutuante, bandeja e painel |
