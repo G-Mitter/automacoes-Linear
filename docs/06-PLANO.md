@@ -1,6 +1,6 @@
 # Plano de Implantação — Automações Linear
 
-- **Versão:** 1.10
+- **Versão:** 1.11
 - **Data:** 2026-11-10
 - **Status:** aprovado
 - **Base:** PRD, TRD, Fluxo, Design e Backend v1.0
@@ -19,8 +19,8 @@
 | E2 | Captura das imagens de referência da Curva ABC | concluída |
 | E3 | Rotina da Curva ABC para 1 filial (até baixar no PC) | concluída |
 | E4 | Organizar o arquivo (nome + pasta) | concluída |
-| E5 | Várias filiais: individual, por grupo e consolidado + formato "ambos" + histórico + resumo | em andamento |
-| E6 | Tratamento de erros e retentativas | pendente |
+| E5 | Várias filiais: individual, por grupo e consolidado + formato "ambos" + histórico + resumo | concluída |
+| E6 | Tratamento de erros e retentativas | em andamento |
 | E7 | Telegram + `rerun` + limpeza de logs | pendente |
 | E8 | Teste de aceitação com as 22 filiais | pendente |
 
@@ -151,6 +151,7 @@
 ## Histórico de mudanças
 | Versão | Data | Mudança |
 |---|---|---|
+| 1.11 | 2026-11-13 | E5 confirmada no ERP (até 7 filiais seguidas, com pausa externa registrada). E6 em andamento: até 3 tentativas por filial, fecha e reabre as telas entre elas, descarta arquivo parcial de tentativa que falhou; a cada tentativa grava tipo, mensagem e print em `ItemExecucao.erros` |
 | 0.1 | 2026-11-10 | Primeiro rascunho |
 | 1.0 | 2026-11-10 | Aprovado |
 | 1.1 | 2026-11-10 | E1 em andamento |

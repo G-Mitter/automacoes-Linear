@@ -142,71 +142,84 @@ def cmd_run(args) -> int:
            "status": "em_andamento", "motivo_aborto": None, "arquivo_log": None, "itens": []}
     _salvar_execucao(exe)
 
+    max_tentativas = geral.get("tentativas", 3)
     na_tela_relatorio = False   # entre uma filial e outra só fecha a visualização e recomeça no filtro
+    parar = False
     for n, (escopo, filiais) in enumerate(itens, 1):
-        console.print(f"[blue]⏳ {n}/{len(itens)} {escopo}[/] filiais {filiais}")
-        it = {"escopo": escopo, "filiais": filiais, "status": "pendente", "tentativas": 1,
+        it = {"escopo": escopo, "filiais": filiais, "status": "pendente", "tentativas": 0,
               "arquivos_finais": [], "erros": [], "inicio": datetime.now().isoformat(timespec="seconds"),
               "fim": None}
         exe["itens"].append(it)
-        try:
-            for k, fmt in enumerate(formatos):
-                pedido = rotina.Pedido(
-                    menu=perfil["menu"], modelo_filtro=perfil["modelo_filtro"], filiais=filiais, de=de, ate=ate,
-                    formato=fmt,
-                    nome_servidor=args.nome or f"{perfil['processo']}_{escopo}_{datetime.now():%H%M%S}",
-                    pasta_servidor=geral["pasta_servidor"], espera=geral["espera_padrao_s"],
-                    opcao_relatorio=perfil.get("opcao_relatorio", "analitico"))
-                antes = downloads.fotografar(pasta_dl)
-                # no 2º formato a visualização continua aberta: começa direto no Exportar
-                if k > 0:
-                    inicio = "E-07"
-                elif na_tela_relatorio:
-                    inicio = "E-03"
+
+        for tentativa in range(1, max_tentativas + 1):
+            it["tentativas"] = tentativa
+            voz = "" if tentativa == 1 else f" (tentativa {tentativa}/{max_tentativas})"
+            console.print(f"[blue]⏳ {n}/{len(itens)} {escopo}{voz}[/] filiais {filiais}")
+            try:
+                for k, fmt in enumerate(formatos):
+                    pedido = rotina.Pedido(
+                        menu=perfil["menu"], modelo_filtro=perfil["modelo_filtro"], filiais=filiais,
+                        de=de, ate=ate, formato=fmt,
+                        nome_servidor=args.nome or f"{perfil['processo']}_{escopo}_{datetime.now():%H%M%S}",
+                        pasta_servidor=geral["pasta_servidor"], espera=geral["espera_padrao_s"],
+                        opcao_relatorio=perfil.get("opcao_relatorio", "analitico"))
+                    antes = downloads.fotografar(pasta_dl)
+                    # no 2º formato a visualização continua aberta: começa direto no Exportar
+                    if k > 0:
+                        inicio = "E-07"
+                    elif na_tela_relatorio:
+                        inicio = "E-03"
+                    else:
+                        inicio = args.a_partir
+                    arquivo = rotina.executar(t, pedido, inicio)
+                    baixado = downloads.esperar_novo(pasta_dl, antes, arquivo, geral["espera_download_s"])
+                    final = organizador.organizar(baixado, Path(geral["pasta_base"]), perfil["processo"],
+                                                  de, ate, escopo, lote=len(itens) > 1)
+                    it["arquivos_finais"].append(str(final))
+                    console.print(f"[green]✅ {escopo}[/] {final}")
+                it["status"] = "ok"
+                if n < len(itens):
+                    rotina.fechar_visualizacao(t)
+                    na_tela_relatorio = True
                 else:
-                    inicio = args.a_partir
-                arquivo = rotina.executar(t, pedido, inicio)
-                baixado = downloads.esperar_novo(pasta_dl, antes, arquivo, geral["espera_download_s"])
-                final = organizador.organizar(baixado, Path(geral["pasta_base"]), perfil["processo"],
-                                              de, ate, escopo, lote=len(itens) > 1)
-                it["arquivos_finais"].append(str(final))
-                console.print(f"[green]✅ {escopo}[/] {final}")
-            it["status"] = "ok"
-            if n < len(itens):
-                rotina.fechar_visualizacao(t)
-                na_tela_relatorio = True
-            else:
-                rotina.fechar_telas(t)
-        except SemDados:
-            it["status"] = "sem_dados"
-            console.print(f"[yellow]⏭ {escopo}[/] sem informações no período, pulando")
-            na_tela_relatorio = True               # a tela do relatório continua aberta
-            if n == len(itens):
-                rotina.fechar_telas(t)
-        except pyautogui.FailSafeException:
-            it["status"] = "falha"
-            exe.update(status="abortada", motivo_aborto="parada de emergência")
-            console.print("[yellow]⚠️ Parada de emergência acionada. Execução interrompida.[/]")
+                    rotina.fechar_telas(t)
+                break   # deu certo: não tenta de novo
+            except SemDados:
+                it["status"] = "sem_dados"
+                console.print(f"[yellow]⏭ {escopo}[/] sem informações no período, pulando")
+                na_tela_relatorio = True           # a tela do relatório continua aberta
+                if n == len(itens):
+                    rotina.fechar_telas(t)
+                break
+            except pyautogui.FailSafeException:
+                it["status"] = "falha"
+                exe.update(status="abortada", motivo_aborto="parada de emergência")
+                console.print("[yellow]⚠️ Parada de emergência acionada. Execução interrompida.[/]")
+                parar = True
+                break
+            except (TelaErro, ErroConfiguracao, TimeoutError) as e:
+                prt = t.print_tela(f"erro_{escopo}_t{tentativa}")
+                it["status"] = "falha"
+                it["arquivos_finais"] = []          # descarta parciais de uma tentativa que não terminou
+                it["erros"].append({"tentativa": tentativa, "passo": None, "tipo": type(e).__name__,
+                                    "mensagem": str(e), "print": str(prt)})
+                console.print(f"[red]❌ {escopo}{voz}[/] {e} · print: {prt}")
+                if isinstance(e, ErroConfiguracao):
+                    exe.update(status="abortada", motivo_aborto=str(e))
+                    parar = True
+                    break
+                try:                                 # fecha e reabre antes da próxima tentativa (ou filial)
+                    na_tela_relatorio = False
+                    rotina.fechar_telas(t)
+                except (TelaErro, TimeoutError):
+                    exe.update(status="abortada", motivo_aborto=f"não voltou à tela inicial depois de {escopo}")
+                    console.print("[red]Não consegui voltar à tela inicial. Parando.[/]")
+                    parar = True
+                    break
+        it["fim"] = datetime.now().isoformat(timespec="seconds")
+        _salvar_execucao(exe)
+        if parar:
             break
-        except (TelaErro, ErroConfiguracao, TimeoutError) as e:
-            prt = t.print_tela(f"erro_{escopo}")
-            it["status"] = "falha"
-            it["erros"].append({"tentativa": 1, "passo": None, "tipo": type(e).__name__,
-                                "mensagem": str(e), "print": str(prt)})
-            console.print(f"[red]❌ {escopo}[/] {e} · print: {prt}")
-            if isinstance(e, ErroConfiguracao):
-                exe.update(status="abortada", motivo_aborto=str(e))
-                break
-            try:                                   # no erro volta à tela inicial e recomeça do menu
-                na_tela_relatorio = False
-                rotina.fechar_telas(t)
-            except (TelaErro, TimeoutError):
-                exe.update(status="abortada", motivo_aborto=f"não voltou à tela inicial depois de {escopo}")
-                console.print("[red]Não consegui voltar à tela inicial. Parando.[/]")
-                break
-        finally:
-            it["fim"] = datetime.now().isoformat(timespec="seconds")
-            _salvar_execucao(exe)
 
     ok = sum(i["status"] in ("ok", "sem_dados") for i in exe["itens"])
     if exe["status"] == "em_andamento":
